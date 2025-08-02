@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { usePosts } from "../../../hooks/usePosts";
+import { useAuth } from "../../../hooks/useAuth";
 import { postSchema, PostFormData } from "../../../utils/validation";
 import Layout from "../../../components/Layout";
 import AuthGuard from "../../../components/AuthGuard";
@@ -14,6 +15,7 @@ import { AVAILABLE_CATEGORIES } from "../../../store/postStore";
 export default function CreatePostPage() {
   const router = useRouter();
   const { createPost, isLoading, error } = usePosts();
+  const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -41,7 +43,7 @@ export default function CreatePostPage() {
     try {
       const postData = {
         ...data,
-        userId: 1, // Mock user ID
+        userId: user?.id || 1, // Use current user's ID
         tags: data.tags
           ? data.tags.split(",").map((tag: string) => tag.trim())
           : [],

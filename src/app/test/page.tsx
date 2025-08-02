@@ -1,9 +1,11 @@
 "use client";
 
 import { usePosts } from "../../hooks/usePosts";
+import { useAuth } from "../../hooks/useAuth";
 import { Search, Filter } from "lucide-react";
 
 export default function TestPage() {
+  const { user } = useAuth();
   const {
     posts,
     allPosts,
@@ -22,7 +24,7 @@ export default function TestPage() {
       await createPost({
         title: "Test Post " + Date.now(),
         body: "This is a test post created at " + new Date().toISOString(),
-        userId: 1,
+        userId: user?.id || 1,
         category: "Technology",
         tags: ["test", "debug"],
       });

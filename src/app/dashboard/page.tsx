@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../hooks/useAuth";
-import { usePosts } from "../../hooks/usePosts";
+import { useUserPosts } from "../../hooks/useUserPosts";
 import Layout from "../../components/Layout";
 import PostCard from "../../components/PostCard";
 import AuthGuard from "../../components/AuthGuard";
@@ -28,22 +28,25 @@ export default function DashboardPage() {
     setFilter,
     setCurrentPage,
     deletePost,
-  } = usePosts();
+  } = useUserPosts();
 
   useEffect(() => {
     console.log("Dashboard mounted, fetching posts");
+    console.log("Current user:", user);
     console.log("Current posts count before fetch:", posts.length);
     fetchPosts();
-  }, [fetchPosts]);
+  }, [fetchPosts, user]);
 
   useEffect(() => {
     console.log(
       "Dashboard posts updated:",
       posts.length,
-      "allPosts:",
-      allPosts.length
+      "allPosts (user posts):",
+      allPosts.length,
+      "User ID:",
+      user?.id
     );
-  }, [posts, allPosts]);
+  }, [posts, allPosts, user]);
 
   const handleEdit = (post: Post) => {
     console.log("Edit clicked for post:", post.id);
@@ -81,6 +84,9 @@ export default function DashboardPage() {
                 </h1>
                 <p className="mt-2 text-gray-600 dark:text-gray-400">
                   Welcome back, {user?.name}! Manage your blog posts here.
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Showing {allPosts.length} of your posts
                 </p>
               </div>
               <button
@@ -206,12 +212,12 @@ export default function DashboardPage() {
                 <Search className="h-12 w-12" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                No posts found
+                {search || filter ? "No posts found" : "No posts yet"}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
                 {search || filter
                   ? "Try adjusting your search or filter criteria."
-                  : "Get started by creating your first blog post."}
+                  : "You haven't created any blog posts yet. Get started by creating your first post!"}
               </p>
               {!search && !filter && (
                 <button
