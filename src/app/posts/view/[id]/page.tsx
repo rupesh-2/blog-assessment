@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { usePosts } from "../../../../hooks/usePosts";
 import Layout from "../../../../components/Layout";
-import AuthGuard from "../../../../components/AuthGuard";
 import { ArrowLeft, Calendar, Tag, User } from "lucide-react";
 import { use } from "react";
 import { Post } from "../../../../store/postStore";

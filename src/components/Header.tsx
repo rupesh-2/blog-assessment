@@ -17,7 +17,7 @@ import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme, setTheme, isDark, isLight, isSystem } =
+  const { theme, setTheme, isDark, isLight, isSystem } =
     useTheme();
   const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

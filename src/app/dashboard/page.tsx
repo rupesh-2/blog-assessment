@@ -35,7 +35,7 @@ export default function DashboardPage() {
     console.log("Current user:", user);
     console.log("Current posts count before fetch:", posts.length);
     fetchPosts();
-  }, [fetchPosts, user]);
+  }, [fetchPosts, user, posts.length]);
 
   useEffect(() => {
     console.log(

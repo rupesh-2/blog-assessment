@@ -3,10 +3,9 @@ import { useEffect } from "react";
 
 export const useTheme = () => {
   const { theme, toggleTheme, setTheme, getEffectiveTheme } = useThemeStore();
-  
+
   // Force re-render when theme changes
   useEffect(() => {
-    const effectiveTheme = getEffectiveTheme();
     // This effect will run whenever the theme changes, ensuring components re-render
   }, [theme, getEffectiveTheme]);
 

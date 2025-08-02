@@ -44,10 +44,10 @@ export default function TestPage() {
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <p>
-              <strong>Search:</strong> "{search}"
+              <strong>Search:</strong> &quot;{search}&quot;
             </p>
             <p>
-              <strong>Filter:</strong> "{filter}"
+              <strong>Filter:</strong> &quot;{filter}&quot;
             </p>
             <p>
               <strong>Total Posts:</strong> {allPosts.length}

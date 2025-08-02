@@ -3,16 +3,10 @@
 import Layout from "../../components/Layout";
 import ThemeToggle from "../../components/ThemeToggle";
 import { useTheme } from "../../hooks/useTheme";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "lucide-react";
+
 
 export default function ThemeDemoPage() {
-  const { theme, isDark, isLight, isSystem } = useTheme();
+  const { theme, isDark, isLight } = useTheme();
 
   return (
     <Layout>

@@ -117,7 +117,7 @@ class ApiService {
         method: "POST",
         body: JSON.stringify(postData),
       });
-    } catch (error) {
+    } catch {
       // JSONPlaceholder doesn't support real creation, so we'll return a mock response
       console.warn(
         "JSONPlaceholder doesn't support real creation, returning mock response"
@@ -135,7 +135,7 @@ class ApiService {
         method: "PUT",
         body: JSON.stringify(postData),
       });
-    } catch (error) {
+    } catch {
       // JSONPlaceholder doesn't support real updates, so we'll return a mock response
       console.warn(
         "JSONPlaceholder doesn't support real updates, returning mock response"
@@ -152,7 +152,7 @@ class ApiService {
       return await this.request<void>(`/posts/${id}`, {
         method: "DELETE",
       });
-    } catch (error) {
+    } catch {
       // JSONPlaceholder doesn't support real deletion, so we'll just return
       console.warn(
         "JSONPlaceholder doesn't support real deletion, returning success"

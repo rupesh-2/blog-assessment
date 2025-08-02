@@ -12,8 +12,7 @@ export default function ThemeToggle({
   variant = "icon",
   className = "",
 }: ThemeToggleProps) {
-  const { theme, toggleTheme, setTheme, isDark, isLight, isSystem } =
-    useTheme();
+  const { toggleTheme, isDark, isSystem } = useTheme();
 
   const getThemeIcon = () => {
     if (isSystem) return <Monitor className="h-4 w-4" />;

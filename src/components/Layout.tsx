@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { useThemeStore } from "../store/themeStore";
 import Header from "./Header";
 
@@ -10,12 +10,10 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const { getEffectiveTheme, theme } = useThemeStore();
-  const [currentTheme, setCurrentTheme] = useState<string>("light");
 
   useEffect(() => {
     // Apply theme to document and body
     const effectiveTheme = getEffectiveTheme();
-    setCurrentTheme(effectiveTheme);
 
     // Remove all theme classes first
     document.documentElement.classList.remove(
@@ -38,7 +36,6 @@ export default function Layout({ children }: LayoutProps) {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
       const effectiveTheme = getEffectiveTheme();
-      setCurrentTheme(effectiveTheme);
 
       // Remove all theme classes first
       document.documentElement.classList.remove(
