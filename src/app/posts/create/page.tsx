@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,10 +9,11 @@ import { postSchema, PostFormData } from "../../../utils/validation";
 import Layout from "../../../components/Layout";
 import AuthGuard from "../../../components/AuthGuard";
 import { ArrowLeft, Save, X } from "lucide-react";
+import { AVAILABLE_CATEGORIES } from "../../../store/postStore";
 
 export default function CreatePostPage() {
   const router = useRouter();
-  const { createPost, isLoading, error, categories } = usePosts();
+  const { createPost, isLoading, error } = usePosts();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -126,12 +127,11 @@ export default function CreatePostPage() {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select a category</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Lifestyle">Lifestyle</option>
-                  <option value="Business">Business</option>
-                  <option value="Travel">Travel</option>
-                  <option value="Food">Food</option>
-                  <option value="Health">Health</option>
+                  {AVAILABLE_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
                 </select>
                 {errors.category && (
                   <p className="mt-1 text-sm text-red-600 dark:text-red-400">

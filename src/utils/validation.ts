@@ -1,9 +1,10 @@
 import * as yup from "yup";
 
+// Login validation schema
 export const loginSchema = yup.object({
   email: yup
     .string()
-    .email("Please enter a valid email")
+    .email("Please enter a valid email address")
     .required("Email is required"),
   password: yup
     .string()
@@ -11,6 +12,9 @@ export const loginSchema = yup.object({
     .required("Password is required"),
 });
 
+export type LoginFormData = yup.InferType<typeof loginSchema>;
+
+// Registration validation schema
 export const registerSchema = yup.object({
   name: yup
     .string()
@@ -18,7 +22,7 @@ export const registerSchema = yup.object({
     .required("Name is required"),
   email: yup
     .string()
-    .email("Please enter a valid email")
+    .email("Please enter a valid email address")
     .required("Email is required"),
   password: yup
     .string()
@@ -30,6 +34,9 @@ export const registerSchema = yup.object({
     .required("Please confirm your password"),
 });
 
+export type RegisterFormData = yup.InferType<typeof registerSchema>;
+
+// Post validation schema
 export const postSchema = yup.object({
   title: yup
     .string()
@@ -40,10 +47,12 @@ export const postSchema = yup.object({
     .string()
     .min(10, "Content must be at least 10 characters")
     .required("Content is required"),
-  category: yup.string().required("Category is required"),
-  tags: yup.string().optional(),
+  category: yup
+    .string()
+    .required("Category is required"),
+  tags: yup
+    .string()
+    .optional(),
 });
 
-export type LoginFormData = yup.InferType<typeof loginSchema>;
-export type RegisterFormData = yup.InferType<typeof registerSchema>;
 export type PostFormData = yup.InferType<typeof postSchema>;

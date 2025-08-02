@@ -9,11 +9,13 @@ import { postSchema, PostFormData } from "../../../../utils/validation";
 import Layout from "../../../../components/Layout";
 import AuthGuard from "../../../../components/AuthGuard";
 import { ArrowLeft, Save, X } from "lucide-react";
+import { use } from "react";
+import { AVAILABLE_CATEGORIES } from "../../../../store/postStore";
 
 interface EditPostPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditPostPage({ params }: EditPostPageProps) {
@@ -21,6 +23,9 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   const { posts, updatePost, isLoading, error, fetchPosts } = usePosts();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPost, setCurrentPost] = useState<any>(null);
+
+  // Unwrap params using React.use()
+  const { id } = use(params);
 
   const {
     register,
@@ -37,7 +42,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   useEffect(() => {
     const loadPost = async () => {
       await fetchPosts();
-      const post = posts.find((p) => p.id === parseInt(params.id));
+      const post = posts.find((p) => p.id === parseInt(id));
       if (post) {
         setCurrentPost(post);
         setValue("title", post.title);
@@ -48,7 +53,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
         // If post not found in current posts, try to fetch it individually
         try {
           const { apiService } = await import("../../../../services/api");
-          const postData = await apiService.getPost(parseInt(params.id));
+          const postData = await apiService.getPost(parseInt(id));
           if (postData.id) {
             setCurrentPost(postData);
             setValue("title", postData.title);
@@ -66,7 +71,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     };
 
     loadPost();
-  }, [router, params.id, fetchPosts, posts, setValue]);
+  }, [router, id, fetchPosts, posts, setValue]);
 
   const onSubmit = async (data: PostFormData) => {
     setIsSubmitting(true);
@@ -77,7 +82,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
         tags: data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [],
       };
 
-      await updatePost(parseInt(params.id), postData);
+      await updatePost(parseInt(id), postData);
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to update post:", error);
@@ -163,12 +168,11 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Select a category</option>
-                  <option value="Technology">Technology</option>
-                  <option value="Lifestyle">Lifestyle</option>
-                  <option value="Business">Business</option>
-                  <option value="Travel">Travel</option>
-                  <option value="Food">Food</option>
-                  <option value="Health">Health</option>
+                  {AVAILABLE_CATEGORIES.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
                 </select>
                 {errors.category && (
                   <p className="mt-1 text-sm text-red-600 dark:text-red-400">

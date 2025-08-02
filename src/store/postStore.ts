@@ -34,6 +34,20 @@ interface PostState {
   clearError: () => void;
 }
 
+// Available categories for consistency
+export const AVAILABLE_CATEGORIES = [
+  "Technology",
+  "Lifestyle",
+  "Business",
+  "Travel",
+  "Food",
+  "Health",
+  "Sports",
+  "Entertainment",
+  "Education",
+  "Science",
+];
+
 export const usePostStore = create<PostState>((set, get) => ({
   posts: [],
   currentPost: null,
@@ -53,12 +67,7 @@ export const usePostStore = create<PostState>((set, get) => ({
       const postsWithMetadata = posts.map((post, index) => ({
         ...post,
         tags: [`tag${index + 1}`, `tech`, `blog`],
-        category:
-          index % 3 === 0
-            ? "Technology"
-            : index % 3 === 1
-            ? "Lifestyle"
-            : "Business",
+        category: AVAILABLE_CATEGORIES[index % AVAILABLE_CATEGORIES.length],
         createdAt: new Date(
           Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
         ).toISOString(),
@@ -77,13 +86,30 @@ export const usePostStore = create<PostState>((set, get) => ({
   createPost: async (postData) => {
     set({ isLoading: true, error: null });
     try {
-      const newPost: Post = await apiService.createPost(postData);
-      const { posts } = get();
+      // Create a new post with a unique ID
+      const newPost: Post = {
+        id: Date.now(), // Use timestamp as unique ID
+        ...postData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
 
+      // Add to local state immediately for better UX
+      const { posts } = get();
       set({
         posts: [newPost, ...posts],
         isLoading: false,
       });
+
+      // Also try to create on the server (JSONPlaceholder will return the same data)
+      try {
+        await apiService.createPost(postData);
+      } catch (serverError) {
+        console.warn(
+          "Server creation failed, but post is saved locally:",
+          serverError
+        );
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to create post",
@@ -95,13 +121,33 @@ export const usePostStore = create<PostState>((set, get) => ({
   updatePost: async (id, postData) => {
     set({ isLoading: true, error: null });
     try {
-      const updatedPost: Post = await apiService.updatePost(id, postData);
       const { posts } = get();
+      const existingPost = posts.find((p) => p.id === id);
+
+      if (!existingPost) {
+        throw new Error("Post not found");
+      }
+
+      const updatedPost: Post = {
+        ...existingPost,
+        ...postData,
+        updatedAt: new Date().toISOString(),
+      };
 
       set({
         posts: posts.map((post) => (post.id === id ? updatedPost : post)),
         isLoading: false,
       });
+
+      // Also try to update on the server
+      try {
+        await apiService.updatePost(id, postData);
+      } catch (serverError) {
+        console.warn(
+          "Server update failed, but post is updated locally:",
+          serverError
+        );
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to update post",
@@ -113,13 +159,22 @@ export const usePostStore = create<PostState>((set, get) => ({
   deletePost: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      await apiService.deletePost(id);
       const { posts } = get();
 
       set({
         posts: posts.filter((post) => post.id !== id),
         isLoading: false,
       });
+
+      // Also try to delete on the server
+      try {
+        await apiService.deletePost(id);
+      } catch (serverError) {
+        console.warn(
+          "Server deletion failed, but post is removed locally:",
+          serverError
+        );
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to delete post",
