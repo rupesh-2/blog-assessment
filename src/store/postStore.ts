@@ -21,6 +21,7 @@ interface PostState {
   selectedCategory: string;
   currentPage: number;
   postsPerPage: number;
+  nextId: number; // For generating unique IDs
 
   // Actions
   fetchPosts: () => Promise<void>;
@@ -57,6 +58,7 @@ export const usePostStore = create<PostState>((set, get) => ({
   selectedCategory: "",
   currentPage: 1,
   postsPerPage: 10,
+  nextId: 101, // Start after JSONPlaceholder's existing posts
 
   fetchPosts: async () => {
     set({ isLoading: true, error: null });
@@ -86,30 +88,38 @@ export const usePostStore = create<PostState>((set, get) => ({
   createPost: async (postData) => {
     set({ isLoading: true, error: null });
     try {
-      // Create post using the API
-      const createdPost = await apiService.createPost({
+      const { posts, nextId } = get();
+      
+      // Create a new post with a unique ID
+      const newPost: Post = {
+        id: nextId,
         title: postData.title,
         body: postData.body,
         userId: postData.userId,
-      });
-
-      // Add metadata to the created post
-      const newPost: Post = {
-        ...createdPost,
         tags: postData.tags || [],
         category: postData.category || "Technology",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
-      // Add to local state
-      const { posts } = get();
+      // Add to local state immediately
       set({
         posts: [newPost, ...posts],
+        nextId: nextId + 1,
         isLoading: false,
       });
 
-      console.log("Post created successfully:", newPost);
+      // Try to create on the API (JSONPlaceholder will return success but not persist)
+      try {
+        await apiService.createPost({
+          title: postData.title,
+          body: postData.body,
+          userId: postData.userId,
+        });
+        console.log("Post created successfully (API call made):", newPost);
+      } catch (apiError) {
+        console.warn("API call failed, but post is saved locally:", apiError);
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to create post",
@@ -129,28 +139,33 @@ export const usePostStore = create<PostState>((set, get) => ({
         throw new Error("Post not found");
       }
 
-      // Update post using the API
-      const updatedPostResponse = await apiService.updatePost(id, {
-        title: postData.title,
-        body: postData.body,
-        userId: existingPost.userId,
-      });
-
       // Create updated post with metadata
       const updatedPost: Post = {
-        ...updatedPostResponse,
+        ...existingPost,
+        title: postData.title || existingPost.title,
+        body: postData.body || existingPost.body,
         tags: postData.tags || existingPost.tags || [],
         category: postData.category || existingPost.category || "Technology",
-        createdAt: existingPost.createdAt,
         updatedAt: new Date().toISOString(),
       };
 
+      // Update local state immediately
       set({
         posts: posts.map((post) => (post.id === id ? updatedPost : post)),
         isLoading: false,
       });
 
-      console.log("Post updated successfully:", updatedPost);
+      // Try to update on the API (JSONPlaceholder will return success but not persist)
+      try {
+        await apiService.updatePost(id, {
+          title: updatedPost.title,
+          body: updatedPost.body,
+          userId: existingPost.userId,
+        });
+        console.log("Post updated successfully (API call made):", updatedPost);
+      } catch (apiError) {
+        console.warn("API call failed, but post is updated locally:", apiError);
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to update post",
@@ -163,17 +178,21 @@ export const usePostStore = create<PostState>((set, get) => ({
   deletePost: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      // Delete post using the API
-      await apiService.deletePost(id);
-
-      // Remove from local state
       const { posts } = get();
+
+      // Remove from local state immediately
       set({
         posts: posts.filter((post) => post.id !== id),
         isLoading: false,
       });
 
-      console.log("Post deleted successfully:", id);
+      // Try to delete on the API (JSONPlaceholder will return success but not persist)
+      try {
+        await apiService.deletePost(id);
+        console.log("Post deleted successfully (API call made):", id);
+      } catch (apiError) {
+        console.warn("API call failed, but post is removed locally:", apiError);
+      }
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to delete post",
