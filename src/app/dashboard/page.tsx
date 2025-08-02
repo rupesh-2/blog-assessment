@@ -32,6 +32,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     console.log("Dashboard mounted, fetching posts");
+    console.log("Current posts count before fetch:", posts.length);
     fetchPosts();
   }, [fetchPosts]);
 

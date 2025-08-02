@@ -64,20 +64,29 @@ export const usePostStore = create<PostState>()(
       fetchPosts: async () => {
         set({ isLoading: true, error: null });
         try {
-          const posts = await apiService.getPosts();
+          const { posts: existingPosts } = get();
 
-          // Add category and tags to posts from API
-          const postsWithMetadata = posts.map((post, index) => ({
-            ...post,
-            category: AVAILABLE_CATEGORIES[index % AVAILABLE_CATEGORIES.length],
-            tags: [`tag${index + 1}`, `tech`, `blog`],
-            createdAt: new Date(
-              Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            updatedAt: new Date().toISOString(),
-          }));
+          // Only fetch from API if we don't have posts already
+          if (existingPosts.length === 0) {
+            const posts = await apiService.getPosts();
 
-          set({ posts: postsWithMetadata, isLoading: false });
+            // Add category and tags to posts from API
+            const postsWithMetadata = posts.map((post, index) => ({
+              ...post,
+              category:
+                AVAILABLE_CATEGORIES[index % AVAILABLE_CATEGORIES.length],
+              tags: [`tag${index + 1}`, `tech`, `blog`],
+              createdAt: new Date(
+                Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+              ).toISOString(),
+              updatedAt: new Date().toISOString(),
+            }));
+
+            set({ posts: postsWithMetadata, isLoading: false });
+          } else {
+            // If we already have posts, just set loading to false
+            set({ isLoading: false });
+          }
         } catch (error) {
           set({
             error:
@@ -100,6 +109,7 @@ export const usePostStore = create<PostState>()(
           };
 
           console.log("Created new post for local state:", newPost);
+          console.log("Current posts count before adding:", posts.length);
 
           // Add to local state immediately
           set({
@@ -107,6 +117,11 @@ export const usePostStore = create<PostState>()(
             nextId: nextId + 1,
             isLoading: false,
           });
+
+          console.log(
+            "Post added to store. New count should be:",
+            posts.length + 1
+          );
 
           // Try to create on server (but don't rely on it)
           try {

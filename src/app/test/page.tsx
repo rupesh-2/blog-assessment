@@ -13,11 +13,23 @@ export default function TestPage() {
     setSearch,
     setFilter,
     fetchPosts,
+    createPost,
   } = usePosts();
 
-  const createTestPost = () => {
-    // This is just for testing - in a real app you'd use the createPost function
+  const createTestPost = async () => {
     console.log("Creating test post...");
+    try {
+      await createPost({
+        title: "Test Post " + Date.now(),
+        body: "This is a test post created at " + new Date().toISOString(),
+        userId: 1,
+        category: "Technology",
+        tags: ["test", "debug"],
+      });
+      console.log("Test post created successfully");
+    } catch (error) {
+      console.error("Failed to create test post:", error);
+    }
   };
 
   return (
@@ -106,6 +118,12 @@ export default function TestPage() {
           className="mr-4 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
         >
           Clear Filter
+        </button>
+        <button
+          onClick={createTestPost}
+          className="mr-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+        >
+          Create Test Post
         </button>
       </div>
 
