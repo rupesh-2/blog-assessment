@@ -29,14 +29,14 @@ export default function PostCard({
 
   return (
     <div className="bg-card text-card-foreground rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-border">
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h3 className="text-xl font-semibold text-foreground mb-2 line-clamp-2">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2 line-clamp-2">
               {post.title}
             </h3>
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
                 <span>
@@ -46,7 +46,7 @@ export default function PostCard({
                 </span>
               </div>
               {post.category && (
-                <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs w-fit">
                   {post.category}
                 </span>
               )}
@@ -54,7 +54,7 @@ export default function PostCard({
           </div>
 
           {showActions && (
-            <div className="flex items-center space-x-2 ml-4">
+            <div className="flex items-center space-x-2 ml-2 sm:ml-4 flex-shrink-0">
               <button
                 onClick={handleEdit}
                 className="p-2 text-muted-foreground hover:text-primary transition-colors"
@@ -94,7 +94,7 @@ export default function PostCard({
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-border">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-border space-y-2 sm:space-y-0">
           <span className="text-sm text-muted-foreground">
             Post ID: {post.id}
           </span>

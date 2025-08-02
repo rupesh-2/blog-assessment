@@ -71,7 +71,7 @@ export default function CreatePostPage() {
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => router.back()}
@@ -81,7 +81,7 @@ export default function CreatePostPage() {
                   <span>Back</span>
                 </button>
                 <div>
-                  <h1 className="text-3xl font-bold text-foreground">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                     Create New Post
                   </h1>
                   <p className="mt-2 text-muted-foreground">
@@ -155,7 +155,7 @@ export default function CreatePostPage() {
               <div className="mb-6">
                 <label
                   htmlFor="tags"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-foreground mb-2"
                 >
                   Tags
                 </label>
@@ -163,14 +163,14 @@ export default function CreatePostPage() {
                   {...register("tags")}
                   type="text"
                   id="tags"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Enter tags separated by commas (e.g., tech, blog, tutorial)"
                 />
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Separate multiple tags with commas
                 </p>
                 {errors.tags && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.tags.message}
                   </p>
                 )}
@@ -180,7 +180,7 @@ export default function CreatePostPage() {
               <div>
                 <label
                   htmlFor="body"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-foreground mb-2"
                 >
                   Content *
                 </label>
@@ -188,26 +188,26 @@ export default function CreatePostPage() {
                   {...register("body")}
                   id="body"
                   rows={12}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-vertical"
                   placeholder="Write your post content here..."
                 />
                 {errors.body && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.body.message}
                   </p>
                 )}
-                <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="mt-2 text-sm text-muted-foreground">
                   {watchedBody?.length || 0} characters
                 </div>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-end space-x-4">
+            <div className="flex flex-col sm:flex-row items-center justify-end space-y-2 sm:space-y-0 sm:space-x-4">
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="flex items-center space-x-2 px-4 py-2 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="flex items-center justify-center space-x-2 px-4 py-2 text-muted-foreground bg-card border border-border rounded-lg hover:bg-accent transition-colors w-full sm:w-auto"
               >
                 <X className="h-4 w-4" />
                 <span>Cancel</span>
@@ -215,11 +215,11 @@ export default function CreatePostPage() {
               <button
                 type="submit"
                 disabled={isSubmitting || isLoading}
-                className="flex items-center space-x-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center justify-center space-x-2 px-6 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
               >
                 {isSubmitting || isLoading ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
                     <span>Saving...</span>
                   </>
                 ) : (

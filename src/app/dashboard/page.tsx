@@ -77,9 +77,9 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
               <div>
-                <h1 className="text-3xl font-bold text-foreground">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                   Dashboard
                 </h1>
                 <p className="mt-2 text-muted-foreground">
@@ -91,7 +91,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => router.push("/posts/create")}
-                className="flex items-center space-x-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors"
+                className="flex items-center justify-center space-x-2 px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors w-full sm:w-auto"
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Post</span>
@@ -100,8 +100,8 @@ export default function DashboardPage() {
           </div>
 
           {/* Search and Filter */}
-          <div className="mb-6 bg-card text-card-foreground rounded-lg shadow border border-border p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="mb-6 bg-card text-card-foreground rounded-lg shadow border border-border p-4 sm:p-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -150,7 +150,7 @@ export default function DashboardPage() {
           {/* Posts Grid */}
           {!isLoading && posts.length > 0 && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
                 {posts.map((post) => (
                   <PostCard
                     key={post.id}
@@ -164,14 +164,14 @@ export default function DashboardPage() {
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-center space-x-2">
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2">
                   <button
                     onClick={() => handlePageChange(currentPage - 1)}
                     disabled={currentPage === 1}
                     className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     <ChevronLeft className="h-4 w-4" />
-                    <span>Previous</span>
+                    <span className="hidden sm:inline">Previous</span>
                   </button>
 
                   <div className="flex items-center space-x-1">
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                         <button
                           key={page}
                           onClick={() => handlePageChange(page)}
-                          className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                          className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                             page === currentPage
                               ? "bg-primary text-primary-foreground"
                               : "text-muted-foreground bg-card border border-border hover:bg-accent"
@@ -197,7 +197,7 @@ export default function DashboardPage() {
                     disabled={currentPage === totalPages}
                     className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
-                    <span>Next</span>
+                    <span className="hidden sm:inline">Next</span>
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>

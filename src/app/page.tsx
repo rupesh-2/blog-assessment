@@ -44,8 +44,8 @@ export default function HomePage() {
         </div>
 
         {/* Search and Filter */}
-        <div className="mb-6 bg-card rounded-lg shadow p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mb-6 bg-card rounded-lg shadow p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -102,14 +102,14 @@ export default function HomePage() {
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-center space-x-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-2">
                 <button
                   onClick={() => handlePageChange(currentPage - 1)}
                   disabled={currentPage === 1}
                   className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  <span>Previous</span>
+                  <span className="hidden sm:inline">Previous</span>
                 </button>
 
                 <div className="flex items-center space-x-1">
@@ -118,7 +118,7 @@ export default function HomePage() {
                       <button
                         key={page}
                         onClick={() => handlePageChange(page)}
-                        className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                        className={`px-2 sm:px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                           page === currentPage
                             ? "bg-primary text-primary-foreground"
                             : "text-muted-foreground bg-card border border-border hover:bg-accent"
@@ -135,7 +135,7 @@ export default function HomePage() {
                   disabled={currentPage === totalPages}
                   className="flex items-center space-x-1 px-3 py-2 text-sm font-medium text-muted-foreground bg-card border border-border rounded-lg hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
-                  <span>Next</span>
+                  <span className="hidden sm:inline">Next</span>
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>

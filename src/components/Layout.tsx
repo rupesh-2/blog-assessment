@@ -63,7 +63,9 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
       <Header />
-      <main className="container mx-auto px-4 py-8">{children}</main>
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {children}
+      </main>
     </div>
   );
 }

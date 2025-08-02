@@ -78,10 +78,8 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-              <span className="text-gray-600 dark:text-gray-400">
-                Loading post...
-              </span>
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+              <span className="text-muted-foreground">Loading post...</span>
             </div>
           </div>
         </div>
@@ -95,16 +93,16 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
       <Layout>
         <div className="max-w-4xl mx-auto">
           <div className="text-center py-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-foreground mb-4">
               Post Not Found
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-muted-foreground mb-6">
               The post you&apos;re looking for doesn&apos;t exist or has been
               removed.
             </p>
             <button
               onClick={() => router.push("/")}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="px-6 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors"
             >
               Back to Home
             </button>
@@ -119,20 +117,20 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => router.back()}
-                className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
               >
                 <ArrowLeft className="h-4 w-4" />
                 <span>Back</span>
               </button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
                   {currentPost.title}
                 </h1>
-                <div className="flex items-center space-x-4 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mt-2 text-sm text-muted-foreground">
                   <div className="flex items-center space-x-1">
                     <Calendar className="h-4 w-4" />
                     <span>
@@ -142,7 +140,7 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
                     </span>
                   </div>
                   {currentPost.category && (
-                    <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">
+                    <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs w-fit">
                       {currentPost.category}
                     </span>
                   )}
@@ -153,10 +151,10 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
         </div>
 
         {/* Post Content */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-8">
+        <div className="bg-card text-card-foreground rounded-lg shadow border border-border p-4 sm:p-8">
           {/* Meta Information */}
-          <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 pb-4 border-b border-border space-y-2 sm:space-y-0">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <User className="h-4 w-4" />
                 <span>User ID: {currentPost.userId}</span>
@@ -172,7 +170,7 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
                 </span>
               </div>
             </div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
+            <span className="text-sm text-muted-foreground">
               Post ID: {currentPost.id}
             </span>
           </div>
@@ -180,12 +178,12 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
           {/* Tags */}
           {currentPost.tags && currentPost.tags.length > 0 && (
             <div className="flex items-center space-x-2 mb-6">
-              <Tag className="h-4 w-4 text-gray-400" />
+              <Tag className="h-4 w-4 text-muted-foreground" />
               <div className="flex flex-wrap gap-2">
                 {currentPost.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-sm"
+                    className="px-3 py-1 bg-accent text-accent-foreground rounded-full text-sm"
                   >
                     {tag}
                   </span>
@@ -196,7 +194,7 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
 
           {/* Content */}
           <div className="prose prose-lg dark:prose-invert max-w-none">
-            <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+            <div className="text-foreground leading-relaxed whitespace-pre-wrap">
               {currentPost.body}
             </div>
           </div>
@@ -206,7 +204,7 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
         <div className="mt-8 text-center">
           <button
             onClick={() => router.back()}
-            className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+            className="px-6 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg transition-colors w-full sm:w-auto"
           >
             Back to Posts
           </button>
