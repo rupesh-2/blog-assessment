@@ -16,7 +16,7 @@ export interface PostFormData {
   title: string;
   body: string;
   category: string;
-  tags?: string;
+  tags: string;
 }
 
 export const loginSchema = yup.object({
@@ -60,5 +60,5 @@ export const postSchema = yup.object({
     .min(10, "Content must be at least 10 characters")
     .required("Content is required"),
   category: yup.string().required("Category is required"),
-  tags: yup.string().optional().default(""),
+  tags: yup.string().optional(),
 });
