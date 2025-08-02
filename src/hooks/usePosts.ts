@@ -34,16 +34,21 @@ export const usePosts = () => {
 
     // Filter by search term
     if (search) {
-      filtered = filtered.filter((post) =>
-        post.title.toLowerCase().includes(search.toLowerCase())
+      const beforeSearch = filtered.length;
+      filtered = filtered.filter(
+        (post) =>
+          post.title.toLowerCase().includes(search.toLowerCase()) ||
+          post.body.toLowerCase().includes(search.toLowerCase()) ||
+          (post.category && post.category.toLowerCase().includes(search.toLowerCase()))
       );
-      console.log("After search filter:", filtered.length, "posts");
+      console.log("After search filter:", filtered.length, "posts (was", beforeSearch, ")");
     }
 
     // Filter by category
     if (filter) {
-      filtered = filtered.filter((post) => post.category === filter);
-      console.log("After category filter:", filtered.length, "posts");
+      const beforeCategory = filtered.length;
+      filtered = filtered.filter((post) => post.category && post.category === filter);
+      console.log("After category filter:", filtered.length, "posts (was", beforeCategory, ")");
     }
 
     console.log("Final filtered posts:", filtered.length);

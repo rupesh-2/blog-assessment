@@ -216,8 +216,14 @@ export const usePostStore = create<PostState>()(
         }
       },
 
-      setSearch: (search) => set({ search, currentPage: 1 }),
-      setFilter: (filter) => set({ filter, currentPage: 1 }),
+      setSearch: (search) => {
+        console.log("setSearch called with:", search);
+        set({ search, currentPage: 1 });
+      },
+      setFilter: (filter) => {
+        console.log("setFilter called with:", filter);
+        set({ filter, currentPage: 1 });
+      },
       setCurrentPage: (currentPage) => set({ currentPage }),
       clearError: () => set({ error: null }),
     }),
