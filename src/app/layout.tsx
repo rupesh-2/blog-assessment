@@ -27,10 +27,15 @@ export default function RootLayout({
                       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
                       : parsed.state?.theme || 'light';
                     
+                    // Remove all theme classes first
+                    document.documentElement.classList.remove('dark', 'theme-light', 'theme-dark');
+                    document.body.classList.remove('theme-light', 'theme-dark');
+                    
                     if (effectiveTheme === 'dark') {
                       document.documentElement.classList.add('dark');
+                      document.body.classList.add('theme-dark');
                     } else {
-                      document.documentElement.classList.remove('dark');
+                      document.body.classList.add('theme-light');
                     }
                   }
                 } catch (e) {

@@ -28,15 +28,15 @@ export default function PostCard({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 dark:border-gray-700">
+    <div className="bg-card text-card-foreground rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-border">
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+            <h3 className="text-xl font-semibold text-foreground mb-2 line-clamp-2">
               {post.title}
             </h3>
-            <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <Calendar className="h-4 w-4" />
                 <span>
@@ -46,7 +46,7 @@ export default function PostCard({
                 </span>
               </div>
               {post.category && (
-                <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs">
+                <span className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
                   {post.category}
                 </span>
               )}
@@ -57,14 +57,14 @@ export default function PostCard({
             <div className="flex items-center space-x-2 ml-4">
               <button
                 onClick={handleEdit}
-                className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="p-2 text-muted-foreground hover:text-primary transition-colors"
                 title="Edit post"
               >
                 <Edit className="h-4 w-4" />
               </button>
               <button
                 onClick={handleDelete}
-                className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                className="p-2 text-muted-foreground hover:text-destructive transition-colors"
                 title="Delete post"
               >
                 <Trash2 className="h-4 w-4" />
@@ -74,19 +74,17 @@ export default function PostCard({
         </div>
 
         {/* Content */}
-        <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-          {post.body}
-        </p>
+        <p className="text-muted-foreground mb-4 line-clamp-3">{post.body}</p>
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
           <div className="flex items-center space-x-2 mb-4">
-            <Tag className="h-4 w-4 text-gray-400" />
+            <Tag className="h-4 w-4 text-muted-foreground" />
             <div className="flex flex-wrap gap-1">
               {post.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-xs"
+                  className="px-2 py-1 bg-secondary text-secondary-foreground rounded-full text-xs"
                 >
                   {tag}
                 </span>
@@ -96,14 +94,14 @@ export default function PostCard({
         )}
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-          <span className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
+          <span className="text-sm text-muted-foreground">
             Post ID: {post.id}
           </span>
           {!showActions && (
             <Link
               href={`/posts/view/${post.id}`}
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+              className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
             >
               Read more →
             </Link>

@@ -45,13 +45,13 @@ export default function Header() {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+    <header className="bg-card text-card-foreground shadow-sm border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link
             href="/"
-            className="text-xl font-bold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            className="text-xl font-bold text-foreground hover:text-primary transition-colors"
           >
             Blog Platform
           </Link>
@@ -60,19 +60,19 @@ export default function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Home
             </Link>
             <Link
               href="/theme-demo"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Theme Demo
             </Link>
             <Link
               href="/test-theme"
-              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Test Theme
             </Link>
@@ -80,13 +80,13 @@ export default function Header() {
               <>
                 <Link
                   href="/dashboard"
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/posts/create"
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Create Post
                 </Link>
@@ -100,7 +100,7 @@ export default function Header() {
             <div className="relative" ref={themeMenuRef}>
               <button
                 onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
-                className="flex items-center space-x-2 p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="flex items-center space-x-2 p-2 text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-accent"
                 aria-label="Theme menu"
               >
                 {getThemeIcon()}
@@ -112,16 +112,14 @@ export default function Header() {
 
               {/* Theme Dropdown */}
               {isThemeMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                <div className="absolute right-0 mt-2 w-48 bg-popover text-popover-foreground rounded-lg shadow-lg border border-border py-1 z-50">
                   <button
                     onClick={() => {
                       setTheme("light");
                       setIsThemeMenuOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      isLight
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-300"
+                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-accent transition-colors ${
+                      isLight ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
                     <Sun className="h-4 w-4" />
@@ -132,10 +130,8 @@ export default function Header() {
                       setTheme("dark");
                       setIsThemeMenuOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      isDark
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-300"
+                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-accent transition-colors ${
+                      isDark ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
                     <Moon className="h-4 w-4" />
@@ -146,10 +142,8 @@ export default function Header() {
                       setTheme("system");
                       setIsThemeMenuOpen(false);
                     }}
-                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
-                      isSystem
-                        ? "text-blue-600 dark:text-blue-400"
-                        : "text-gray-700 dark:text-gray-300"
+                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-accent transition-colors ${
+                      isSystem ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
                     <Monitor className="h-4 w-4" />
@@ -162,13 +156,13 @@ export default function Header() {
             {/* User Menu */}
             {user ? (
               <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-2 text-sm text-gray-700 dark:text-gray-300">
+                <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                   <User className="h-4 w-4" />
                   <span>{user.name}</span>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="flex items-center space-x-1 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
                   <span>Logout</span>
@@ -178,13 +172,13 @@ export default function Header() {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Sign in
                 </Link>
                 <Link
                   href="/register"
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                  className="px-4 py-2 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors"
                 >
                   Sign up
                 </Link>
