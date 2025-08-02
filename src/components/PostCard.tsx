@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Post } from '../store/postStore';
-import { Edit, Trash2, Calendar, Tag } from 'lucide-react';
+import Link from "next/link";
+import { Post } from "../store/postStore";
+import { Edit, Trash2, Calendar, Tag } from "lucide-react";
 
 interface PostCardProps {
   post: Post;
@@ -11,13 +11,18 @@ interface PostCardProps {
   showActions?: boolean;
 }
 
-export default function PostCard({ post, onEdit, onDelete, showActions = false }: PostCardProps) {
+export default function PostCard({
+  post,
+  onEdit,
+  onDelete,
+  showActions = false,
+}: PostCardProps) {
   const handleEdit = () => {
     onEdit?.(post);
   };
 
   const handleDelete = () => {
-    if (confirm('Are you sure you want to delete this post?')) {
+    if (confirm("Are you sure you want to delete this post?")) {
       onDelete?.(post.id);
     }
   };
@@ -37,7 +42,7 @@ export default function PostCard({ post, onEdit, onDelete, showActions = false }
                 <span>
                   {post.createdAt
                     ? new Date(post.createdAt).toLocaleDateString()
-                    : 'Unknown date'}
+                    : "Unknown date"}
                 </span>
               </div>
               {post.category && (
@@ -47,7 +52,7 @@ export default function PostCard({ post, onEdit, onDelete, showActions = false }
               )}
             </div>
           </div>
-          
+
           {showActions && (
             <div className="flex items-center space-x-2 ml-4">
               <button
@@ -97,7 +102,7 @@ export default function PostCard({ post, onEdit, onDelete, showActions = false }
           </span>
           {!showActions && (
             <Link
-              href={`/posts/edit/${post.id}`}
+              href={`/posts/view/${post.id}`}
               className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-sm font-medium transition-colors"
             >
               Read more →
@@ -107,4 +112,4 @@ export default function PostCard({ post, onEdit, onDelete, showActions = false }
       </div>
     </div>
   );
-} 
+}
