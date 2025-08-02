@@ -17,6 +17,11 @@ export default function Header() {
     logout();
   };
 
+  // Force re-render when theme changes
+  useEffect(() => {
+    // This will trigger a re-render when theme changes
+  }, [theme, isDark, isLight, isSystem]);
+
   // Close theme menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

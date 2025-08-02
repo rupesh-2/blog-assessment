@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useThemeStore } from "../store/themeStore";
 import Header from "./Header";
 
@@ -9,11 +9,13 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { getEffectiveTheme } = useThemeStore();
+  const { getEffectiveTheme, theme } = useThemeStore();
+  const [currentTheme, setCurrentTheme] = useState<string>("light");
 
   useEffect(() => {
     // Apply theme to document and body
     const effectiveTheme = getEffectiveTheme();
+    setCurrentTheme(effectiveTheme);
 
     // Remove all theme classes first
     document.documentElement.classList.remove(
@@ -29,13 +31,14 @@ export default function Layout({ children }: LayoutProps) {
     } else {
       document.body.classList.add("theme-light");
     }
-  }, [getEffectiveTheme]);
+  }, [getEffectiveTheme, theme]); // Add theme to dependencies
 
   // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handleChange = () => {
       const effectiveTheme = getEffectiveTheme();
+      setCurrentTheme(effectiveTheme);
 
       // Remove all theme classes first
       document.documentElement.classList.remove(
@@ -55,7 +58,7 @@ export default function Layout({ children }: LayoutProps) {
 
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [getEffectiveTheme]);
+  }, [getEffectiveTheme, theme]); // Add theme to dependencies
 
   return (
     <div className="min-h-screen bg-background text-foreground transition-colors duration-200">

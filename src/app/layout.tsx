@@ -37,6 +37,9 @@ export default function RootLayout({
                     } else {
                       document.body.classList.add('theme-light');
                     }
+                    
+                    // Dispatch custom event for theme change
+                    window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: effectiveTheme } }));
                   }
                 } catch (e) {
                   console.warn('Theme initialization failed:', e);
