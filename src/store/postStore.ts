@@ -86,35 +86,36 @@ export const usePostStore = create<PostState>((set, get) => ({
   createPost: async (postData) => {
     set({ isLoading: true, error: null });
     try {
-      // Create a new post with a unique ID
+      // Create post using the API
+      const createdPost = await apiService.createPost({
+        title: postData.title,
+        body: postData.body,
+        userId: postData.userId,
+      });
+
+      // Add metadata to the created post
       const newPost: Post = {
-        id: Date.now(), // Use timestamp as unique ID
-        ...postData,
+        ...createdPost,
+        tags: postData.tags || [],
+        category: postData.category || "Technology",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
-      // Add to local state immediately for better UX
+      // Add to local state
       const { posts } = get();
       set({
         posts: [newPost, ...posts],
         isLoading: false,
       });
 
-      // Also try to create on the server (JSONPlaceholder will return the same data)
-      try {
-        await apiService.createPost(postData);
-      } catch (serverError) {
-        console.warn(
-          "Server creation failed, but post is saved locally:",
-          serverError
-        );
-      }
+      console.log("Post created successfully:", newPost);
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to create post",
         isLoading: false,
       });
+      throw error;
     }
   },
 
@@ -128,9 +129,19 @@ export const usePostStore = create<PostState>((set, get) => ({
         throw new Error("Post not found");
       }
 
+      // Update post using the API
+      const updatedPostResponse = await apiService.updatePost(id, {
+        title: postData.title,
+        body: postData.body,
+        userId: existingPost.userId,
+      });
+
+      // Create updated post with metadata
       const updatedPost: Post = {
-        ...existingPost,
-        ...postData,
+        ...updatedPostResponse,
+        tags: postData.tags || existingPost.tags || [],
+        category: postData.category || existingPost.category || "Technology",
+        createdAt: existingPost.createdAt,
         updatedAt: new Date().toISOString(),
       };
 
@@ -139,47 +150,36 @@ export const usePostStore = create<PostState>((set, get) => ({
         isLoading: false,
       });
 
-      // Also try to update on the server
-      try {
-        await apiService.updatePost(id, postData);
-      } catch (serverError) {
-        console.warn(
-          "Server update failed, but post is updated locally:",
-          serverError
-        );
-      }
+      console.log("Post updated successfully:", updatedPost);
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to update post",
         isLoading: false,
       });
+      throw error;
     }
   },
 
   deletePost: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      const { posts } = get();
+      // Delete post using the API
+      await apiService.deletePost(id);
 
+      // Remove from local state
+      const { posts } = get();
       set({
         posts: posts.filter((post) => post.id !== id),
         isLoading: false,
       });
 
-      // Also try to delete on the server
-      try {
-        await apiService.deletePost(id);
-      } catch (serverError) {
-        console.warn(
-          "Server deletion failed, but post is removed locally:",
-          serverError
-        );
-      }
+      console.log("Post deleted successfully:", id);
     } catch (error) {
       set({
         error: error instanceof Error ? error.message : "Failed to delete post",
         isLoading: false,
       });
+      throw error;
     }
   },
 
