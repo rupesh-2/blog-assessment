@@ -37,6 +37,7 @@ export default function CreatePostPage() {
   // AuthGuard will handle authentication check
 
   const onSubmit = async (data: any) => {
+    console.log("Form submitted with data:", data);
     setIsSubmitting(true);
     try {
       const postData = {
@@ -45,7 +46,9 @@ export default function CreatePostPage() {
         tags: data.tags ? data.tags.split(",").map((tag: string) => tag.trim()) : [],
       };
 
+      console.log("Calling createPost with:", postData);
       await createPost(postData);
+      console.log("createPost completed successfully");
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to create post:", error);

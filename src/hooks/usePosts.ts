@@ -62,8 +62,8 @@ export const usePosts = () => {
   }, [posts]);
 
   return {
-    posts: paginatedPosts,
-    allPosts: posts,
+    posts: paginatedPosts, // For display (paginated)
+    allPosts: posts, // For operations (all posts)
     currentPost,
     isLoading,
     error,

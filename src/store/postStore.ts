@@ -64,9 +64,11 @@ export const usePostStore = create<PostState>()(
       nextId: 101, // Start after JSONPlaceholder's existing posts
 
       fetchPosts: async () => {
+        console.log("fetchPosts called");
         set({ isLoading: true, error: null });
         try {
           const posts: Post[] = await apiService.getPosts();
+          console.log("API returned posts:", posts.length);
 
           // Add mock data for tags and categories
           const postsWithMetadata = posts.map((post, index) => ({
@@ -80,7 +82,9 @@ export const usePostStore = create<PostState>()(
           }));
 
           set({ posts: postsWithMetadata, isLoading: false });
+          console.log("Posts set in store:", postsWithMetadata.length);
         } catch (error) {
+          console.error("Error fetching posts:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to fetch posts",
@@ -90,9 +94,11 @@ export const usePostStore = create<PostState>()(
       },
 
       createPost: async (postData) => {
+        console.log("createPost called with:", postData);
         set({ isLoading: true, error: null });
         try {
           const { posts, nextId } = get();
+          console.log("Current posts count:", posts.length, "Next ID:", nextId);
 
           // Create a new post with a unique ID
           const newPost: Post = {
@@ -106,12 +112,16 @@ export const usePostStore = create<PostState>()(
             updatedAt: new Date().toISOString(),
           };
 
+          console.log("Created new post:", newPost);
+
           // Add to local state immediately
           set({
             posts: [newPost, ...posts],
             nextId: nextId + 1,
             isLoading: false,
           });
+
+          console.log("Post added to store. New count:", posts.length + 1);
 
           // Try to create on the API (JSONPlaceholder will return success but not persist)
           try {
@@ -128,6 +138,7 @@ export const usePostStore = create<PostState>()(
             );
           }
         } catch (error) {
+          console.error("Error in createPost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to create post",
@@ -138,6 +149,7 @@ export const usePostStore = create<PostState>()(
       },
 
       updatePost: async (id, postData) => {
+        console.log("updatePost called with id:", id, "data:", postData);
         set({ isLoading: true, error: null });
         try {
           const { posts } = get();
@@ -146,6 +158,8 @@ export const usePostStore = create<PostState>()(
           if (!existingPost) {
             throw new Error("Post not found");
           }
+
+          console.log("Found existing post:", existingPost);
 
           // Create updated post with metadata
           const updatedPost: Post = {
@@ -158,11 +172,15 @@ export const usePostStore = create<PostState>()(
             updatedAt: new Date().toISOString(),
           };
 
+          console.log("Updated post:", updatedPost);
+
           // Update local state immediately
           set({
             posts: posts.map((post) => (post.id === id ? updatedPost : post)),
             isLoading: false,
           });
+
+          console.log("Post updated in store");
 
           // Try to update on the API (JSONPlaceholder will return success but not persist)
           try {
@@ -182,6 +200,7 @@ export const usePostStore = create<PostState>()(
             );
           }
         } catch (error) {
+          console.error("Error in updatePost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to update post",
@@ -192,6 +211,7 @@ export const usePostStore = create<PostState>()(
       },
 
       deletePost: async (id) => {
+        console.log("deletePost called with id:", id);
         set({ isLoading: true, error: null });
         try {
           const { posts } = get();
@@ -201,6 +221,8 @@ export const usePostStore = create<PostState>()(
             posts: posts.filter((post) => post.id !== id),
             isLoading: false,
           });
+
+          console.log("Post deleted from store");
 
           // Try to delete on the API (JSONPlaceholder will return success but not persist)
           try {
@@ -213,6 +235,7 @@ export const usePostStore = create<PostState>()(
             );
           }
         } catch (error) {
+          console.error("Error in deletePost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to delete post",
