@@ -10,7 +10,7 @@ import Layout from "../../../../components/Layout";
 import AuthGuard from "../../../../components/AuthGuard";
 import { ArrowLeft, Save, X } from "lucide-react";
 import { use } from "react";
-import { AVAILABLE_CATEGORIES } from "../../../../store/postStore";
+import { AVAILABLE_CATEGORIES, Post } from "../../../../store/postStore";
 
 interface EditPostPageProps {
   params: Promise<{
@@ -22,7 +22,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   const router = useRouter();
   const { allPosts, updatePost, isLoading, error, fetchPosts } = usePosts();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentPost, setCurrentPost] = useState<any>(null);
+  const [currentPost, setCurrentPost] = useState<Post | null>(null);
   const [isLoadingPost, setIsLoadingPost] = useState(true);
 
   // Unwrap params using React.use()
@@ -32,7 +32,6 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     watch,
     reset,
   } = useForm<PostFormData>({
@@ -101,7 +100,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     loadPost();
   }, [router, id, fetchPosts, allPosts, reset]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: PostFormData) => {
     setIsSubmitting(true);
     try {
       const postData = {
@@ -152,7 +151,8 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                 Post Not Found
               </h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                The post you're looking for doesn't exist or has been removed.
+                The post you&apos;re looking for doesn&apos;t exist or has been
+                removed.
               </p>
               <button
                 onClick={() => router.push("/dashboard")}
