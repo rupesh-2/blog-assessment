@@ -31,10 +31,12 @@ export const useThemeStore = create<ThemeState>()(
       getEffectiveTheme: () => {
         const { theme } = get();
         if (theme === "system") {
-          return typeof window !== "undefined" &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
+          if (typeof window !== "undefined") {
+            return window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          }
+          return "light"; // Default for SSR
         }
         return theme;
       },

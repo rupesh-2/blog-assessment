@@ -70,6 +70,12 @@ export default function Header() {
             >
               Theme Demo
             </Link>
+            <Link
+              href="/test-theme"
+              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Test Theme
+            </Link>
             {user && (
               <>
                 <Link
