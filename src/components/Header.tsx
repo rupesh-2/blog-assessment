@@ -1,16 +1,47 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../hooks/useTheme';
-import { Sun, Moon, LogOut, User } from 'lucide-react';
+import Link from "next/link";
+import { useAuth } from "../hooks/useAuth";
+import { useTheme } from "../hooks/useTheme";
+import { Sun, Moon, Monitor, LogOut, User, ChevronDown } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, setTheme, isDark, isLight, isSystem } =
+    useTheme();
+  const [isThemeMenuOpen, setIsThemeMenuOpen] = useState(false);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
     logout();
+  };
+
+  // Close theme menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        themeMenuRef.current &&
+        !themeMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsThemeMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getThemeIcon = () => {
+    if (isSystem) return <Monitor className="h-4 w-4" />;
+    if (isDark) return <Moon className="h-4 w-4" />;
+    return <Sun className="h-4 w-4" />;
+  };
+
+  const getThemeLabel = () => {
+    if (isSystem) return "System";
+    if (isDark) return "Dark";
+    return "Light";
   };
 
   return (
@@ -33,6 +64,12 @@ export default function Header() {
             >
               Home
             </Link>
+            <Link
+              href="/theme-demo"
+              className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Theme Demo
+            </Link>
             {user && (
               <>
                 <Link
@@ -54,17 +91,67 @@ export default function Header() {
           {/* User Menu & Theme Toggle */}
           <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
+            <div className="relative" ref={themeMenuRef}>
+              <button
+                onClick={() => setIsThemeMenuOpen(!isThemeMenuOpen)}
+                className="flex items-center space-x-2 p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                aria-label="Theme menu"
+              >
+                {getThemeIcon()}
+                <span className="text-sm hidden sm:inline">
+                  {getThemeLabel()}
+                </span>
+                <ChevronDown className="h-3 w-3" />
+              </button>
+
+              {/* Theme Dropdown */}
+              {isThemeMenuOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50">
+                  <button
+                    onClick={() => {
+                      setTheme("light");
+                      setIsThemeMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                      isLight
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    <Sun className="h-4 w-4" />
+                    <span>Light</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTheme("dark");
+                      setIsThemeMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                      isDark
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    <Moon className="h-4 w-4" />
+                    <span>Dark</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTheme("system");
+                      setIsThemeMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center space-x-3 px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${
+                      isSystem
+                        ? "text-blue-600 dark:text-blue-400"
+                        : "text-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    <Monitor className="h-4 w-4" />
+                    <span>System</span>
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
 
             {/* User Menu */}
             {user ? (
@@ -102,4 +189,4 @@ export default function Header() {
       </div>
     </header>
   );
-} 
+}

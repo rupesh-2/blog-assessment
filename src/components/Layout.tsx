@@ -1,7 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
-import { useThemeStore } from '../store/themeStore';
+import { ReactNode } from 'react';
 import Header from './Header';
 
 interface LayoutProps {
@@ -9,19 +8,8 @@ interface LayoutProps {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const { theme } = useThemeStore();
-
-  useEffect(() => {
-    // Apply theme to document
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme]);
-
   return (
-    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200`}>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
       <Header />
       <main className="container mx-auto px-4 py-8">
         {children}
