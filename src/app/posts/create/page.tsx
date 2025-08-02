@@ -75,16 +75,16 @@ export default function CreatePostPage() {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => router.back()}
-                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <ArrowLeft className="h-4 w-4" />
                   <span>Back</span>
                 </button>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                  <h1 className="text-3xl font-bold text-foreground">
                     Create New Post
                   </h1>
-                  <p className="mt-2 text-gray-600 dark:text-gray-400">
+                  <p className="mt-2 text-muted-foreground">
                     Write and publish your next blog post
                   </p>
                 </div>
@@ -94,19 +94,19 @@ export default function CreatePostPage() {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-              <p className="text-red-600 dark:text-red-400">{error}</p>
+            <div className="mb-6 bg-destructive/10 border border-destructive/20 rounded-lg p-4">
+              <p className="text-destructive">{error}</p>
             </div>
           )}
 
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <div className="bg-card text-card-foreground rounded-lg shadow border border-border p-6">
               {/* Title */}
               <div className="mb-6">
                 <label
                   htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-foreground mb-2"
                 >
                   Post Title *
                 </label>
@@ -114,11 +114,11 @@ export default function CreatePostPage() {
                   {...register("title")}
                   type="text"
                   id="title"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                   placeholder="Enter your post title"
                 />
                 {errors.title && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.title.message}
                   </p>
                 )}
@@ -128,14 +128,14 @@ export default function CreatePostPage() {
               <div className="mb-6">
                 <label
                   htmlFor="category"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  className="block text-sm font-medium text-foreground mb-2"
                 >
                   Category *
                 </label>
                 <select
                   {...register("category")}
                   id="category"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 >
                   <option value="">Select a category</option>
                   {AVAILABLE_CATEGORIES.map((category) => (
@@ -145,7 +145,7 @@ export default function CreatePostPage() {
                   ))}
                 </select>
                 {errors.category && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  <p className="mt-1 text-sm text-destructive">
                     {errors.category.message}
                   </p>
                 )}
