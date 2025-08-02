@@ -4,7 +4,6 @@ export const useAuth = () => {
   const {
     user,
     token,
-    isAuthenticated,
     isLoading,
     error,
     login,
@@ -13,6 +12,9 @@ export const useAuth = () => {
     clearError,
     checkAuth,
   } = useAuthStore();
+
+  // Compute isAuthenticated based on user and token
+  const isAuthenticated = !!user && !!token;
 
   return {
     user,

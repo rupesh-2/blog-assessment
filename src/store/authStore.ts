@@ -41,15 +41,19 @@ export const useAuthStore = create<AuthState>()(
       ],
 
       login: async (email: string, _password: string) => {
+        console.log("Login attempt for email:", email);
         set({ isLoading: true, error: null });
         try {
           const { registeredUsers } = get();
+          console.log("Registered users:", registeredUsers);
           const user = registeredUsers.find((u) => u.email === email);
+          console.log("Found user:", user);
 
           if (user) {
             // Create JWT token
             const token = createMockJWT(user);
             setToken(token);
+            console.log("Created token and set user:", user);
 
             set({
               user,
@@ -57,12 +61,13 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
             });
           } else {
+            console.log("User not found for email:", email);
             throw new Error("User not found. Please register first.");
           }
         } catch (error) {
+          console.error("Login error:", error);
           set({
-            error:
-              error instanceof Error ? error.message : "Login failed",
+            error: error instanceof Error ? error.message : "Login failed",
             isLoading: false,
           });
           throw error;
@@ -70,12 +75,15 @@ export const useAuthStore = create<AuthState>()(
       },
 
       register: async (name: string, email: string, _password: string) => {
+        console.log("Register attempt for:", { name, email });
         set({ isLoading: true, error: null });
         try {
           const { registeredUsers } = get();
+          console.log("Current registered users:", registeredUsers);
           const existingUser = registeredUsers.find((u) => u.email === email);
 
           if (existingUser) {
+            console.log("User already exists:", existingUser);
             throw new Error("User with this email already exists");
           }
 
@@ -85,11 +93,14 @@ export const useAuthStore = create<AuthState>()(
             email,
           };
 
+          console.log("Creating new user:", newUser);
           set({
             registeredUsers: [...registeredUsers, newUser],
             isLoading: false,
           });
+          console.log("User registered successfully:", newUser);
         } catch (error) {
+          console.error("Registration error:", error);
           set({
             error:
               error instanceof Error ? error.message : "Registration failed",
@@ -127,9 +138,24 @@ export const useAuthStore = create<AuthState>()(
     {
       name: "auth-storage",
       partialize: (state) => ({
+        user: state.user,
         token: state.token,
         registeredUsers: state.registeredUsers,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Check if we have a valid token and set user accordingly
+          if (state.token && isTokenValid(state.token)) {
+            const decoded = decodeToken(state.token);
+            if (decoded) {
+              state.user = decoded;
+            }
+          } else {
+            state.user = null;
+            state.token = null;
+          }
+        }
+      },
     }
   )
 );
