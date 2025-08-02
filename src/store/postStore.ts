@@ -271,6 +271,13 @@ export const usePostStore = create<PostState>()(
         posts: state.posts,
         nextId: state.nextId,
       }),
+      onRehydrateStorage: () => (state) => {
+        console.log(
+          "Post store rehydrated:",
+          state?.posts?.length || 0,
+          "posts"
+        );
+      },
     }
   )
 );

@@ -36,7 +36,7 @@ export const registerSchema = yup.object({
 
 export type RegisterFormData = yup.InferType<typeof registerSchema>;
 
-// Post validation schema
+// Post validation schema - simplified
 export const postSchema = yup.object({
   title: yup
     .string()
@@ -47,12 +47,8 @@ export const postSchema = yup.object({
     .string()
     .min(10, "Content must be at least 10 characters")
     .required("Content is required"),
-  category: yup
-    .string()
-    .required("Category is required"),
-  tags: yup
-    .string()
-    .optional(),
+  category: yup.string().required("Category is required"),
+  tags: yup.string().optional(),
 });
 
 export type PostFormData = yup.InferType<typeof postSchema>;

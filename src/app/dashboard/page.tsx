@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const { user } = useAuth();
   const {
     posts,
+    allPosts,
     isLoading,
     error,
     searchTerm,
@@ -29,14 +30,26 @@ export default function DashboardPage() {
   } = usePosts();
 
   useEffect(() => {
+    console.log("Dashboard mounted, fetching posts");
     fetchPosts();
   }, [fetchPosts]);
 
+  useEffect(() => {
+    console.log(
+      "Dashboard posts updated:",
+      posts.length,
+      "allPosts:",
+      allPosts.length
+    );
+  }, [posts, allPosts]);
+
   const handleEdit = (post: any) => {
+    console.log("Edit clicked for post:", post.id);
     router.push(`/posts/edit/${post.id}`);
   };
 
   const handleDelete = async (id: number) => {
+    console.log("Delete clicked for post:", id);
     await deletePost(id);
   };
 
