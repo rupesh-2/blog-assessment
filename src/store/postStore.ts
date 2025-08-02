@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
 export interface Post {
   id: number;
@@ -20,10 +20,10 @@ interface PostState {
   selectedCategory: string;
   currentPage: number;
   postsPerPage: number;
-  
+
   // Actions
   fetchPosts: () => Promise<void>;
-  createPost: (post: Omit<Post, 'id'>) => Promise<void>;
+  createPost: (post: Omit<Post, "id">) => Promise<void>;
   updatePost: (id: number, post: Partial<Post>) => Promise<void>;
   deletePost: (id: number) => Promise<void>;
   setCurrentPost: (post: Post | null) => void;
@@ -38,30 +38,39 @@ export const usePostStore = create<PostState>((set, get) => ({
   currentPost: null,
   isLoading: false,
   error: null,
-  searchTerm: '',
-  selectedCategory: '',
+  searchTerm: "",
+  selectedCategory: "",
   currentPage: 1,
   postsPerPage: 10,
 
   fetchPosts: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
       const posts: Post[] = await response.json();
-      
+
       // Add mock data for tags and categories
       const postsWithMetadata = posts.map((post, index) => ({
         ...post,
         tags: [`tag${index + 1}`, `tech`, `blog`],
-        category: index % 3 === 0 ? 'Technology' : index % 3 === 1 ? 'Lifestyle' : 'Business',
-        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+        category:
+          index % 3 === 0
+            ? "Technology"
+            : index % 3 === 1
+            ? "Lifestyle"
+            : "Business",
+        createdAt: new Date(
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         updatedAt: new Date().toISOString(),
       }));
-      
+
       set({ posts: postsWithMetadata, isLoading: false });
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to fetch posts',
+        error: error instanceof Error ? error.message : "Failed to fetch posts",
         isLoading: false,
       });
     }
@@ -70,24 +79,27 @@ export const usePostStore = create<PostState>((set, get) => ({
   createPost: async (postData) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData),
-      });
-      
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/posts",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+
       const newPost: Post = await response.json();
       const { posts } = get();
-      
+
       set({
         posts: [newPost, ...posts],
         isLoading: false,
       });
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to create post',
+        error: error instanceof Error ? error.message : "Failed to create post",
         isLoading: false,
       });
     }
@@ -96,24 +108,27 @@ export const usePostStore = create<PostState>((set, get) => ({
   updatePost: async (id, postData) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(postData),
-      });
-      
+      const response = await fetch(
+        `https://jsonplaceholder.typicode.com/posts/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(postData),
+        }
+      );
+
       const updatedPost: Post = await response.json();
       const { posts } = get();
-      
+
       set({
-        posts: posts.map(post => post.id === id ? updatedPost : post),
+        posts: posts.map((post) => (post.id === id ? updatedPost : post)),
         isLoading: false,
       });
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to update post',
+        error: error instanceof Error ? error.message : "Failed to update post",
         isLoading: false,
       });
     }
@@ -123,18 +138,18 @@ export const usePostStore = create<PostState>((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       const { posts } = get();
-      
+
       set({
-        posts: posts.filter(post => post.id !== id),
+        posts: posts.filter((post) => post.id !== id),
         isLoading: false,
       });
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to delete post',
+        error: error instanceof Error ? error.message : "Failed to delete post",
         isLoading: false,
       });
     }
@@ -159,4 +174,4 @@ export const usePostStore = create<PostState>((set, get) => ({
   clearError: () => {
     set({ error: null });
   },
-})); 
+}));
