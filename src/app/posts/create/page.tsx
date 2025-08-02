@@ -22,7 +22,7 @@ export default function CreatePostPage() {
     formState: { errors },
     watch,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postSchema) as any,
+    resolver: yupResolver(postSchema),
     defaultValues: {
       title: "",
       body: "",

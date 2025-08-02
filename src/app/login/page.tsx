@@ -19,12 +19,9 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
   });
-
-  const watchedPassword = watch("password");
 
   useEffect(() => {
     clearError();

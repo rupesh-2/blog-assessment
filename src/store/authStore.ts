@@ -40,7 +40,7 @@ export const useAuthStore = create<AuthState>()(
         { id: 1, name: "Admin User", email: "admin@example.com" },
       ],
 
-      login: async (email: string, password: string) => {
+      login: async (email: string, _password: string) => {
         set({ isLoading: true, error: null });
         try {
           const { registeredUsers } = get();
@@ -61,14 +61,15 @@ export const useAuthStore = create<AuthState>()(
           }
         } catch (error) {
           set({
-            error: error instanceof Error ? error.message : "Login failed",
+            error:
+              error instanceof Error ? error.message : "Login failed",
             isLoading: false,
           });
           throw error;
         }
       },
 
-      register: async (name: string, email: string, password: string) => {
+      register: async (name: string, email: string, _password: string) => {
         set({ isLoading: true, error: null });
         try {
           const { registeredUsers } = get();

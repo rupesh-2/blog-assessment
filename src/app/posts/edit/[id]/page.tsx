@@ -35,7 +35,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     watch,
     reset,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postSchema) as any,
+    resolver: yupResolver(postSchema),
   });
 
   const watchedBody = watch("body");

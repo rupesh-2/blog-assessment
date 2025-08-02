@@ -31,7 +31,7 @@ export const isTokenValid = (token: string | null): boolean => {
   }
 };
 
-export const decodeToken = (token: string): any => {
+export const decodeToken = (token: string): User | null => {
   try {
     const payload = token.split(".")[1];
     if (!payload) return null;
