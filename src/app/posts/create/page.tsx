@@ -3,10 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { usePosts } from "../../../hooks/usePosts";
 import { useAuth } from "../../../hooks/useAuth";
-import { postSchema, PostFormData } from "../../../utils/validation";
+import { PostFormData } from "../../../utils/validation";
 import Layout from "../../../components/Layout";
 import AuthGuard from "../../../components/AuthGuard";
 import { ArrowLeft, Save, X } from "lucide-react";
@@ -24,7 +23,6 @@ export default function CreatePostPage() {
     formState: { errors },
     watch,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postSchema),
     defaultValues: {
       title: "",
       body: "",
@@ -38,6 +36,20 @@ export default function CreatePostPage() {
   // AuthGuard will handle authentication check
 
   const onSubmit = async (data: PostFormData) => {
+    // Manual validation
+    if (!data.title || data.title.length < 3) {
+      alert("Title must be at least 3 characters long");
+      return;
+    }
+    if (!data.body || data.body.length < 10) {
+      alert("Content must be at least 10 characters long");
+      return;
+    }
+    if (!data.category) {
+      alert("Please select a category");
+      return;
+    }
+
     console.log("Form submitted with data:", data);
     setIsSubmitting(true);
     try {

@@ -45,10 +45,10 @@ export default function ViewPostPage({ params }: ViewPostPageProps) {
             if (postData.id) {
               const enhancedPost = {
                 ...postData,
-                category: postData.category || "Technology",
-                tags: postData.tags || ["tech", "blog"],
-                createdAt: postData.createdAt || new Date().toISOString(),
-                updatedAt: postData.updatedAt || new Date().toISOString(),
+                category: "Technology",
+                tags: ["tech", "blog"],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
               };
               setCurrentPost(enhancedPost);
             } else {

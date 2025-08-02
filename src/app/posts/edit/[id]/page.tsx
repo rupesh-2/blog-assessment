@@ -3,9 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { usePosts } from "../../../../hooks/usePosts";
-import { postSchema, PostFormData } from "../../../../utils/validation";
+import { PostFormData } from "../../../../utils/validation";
 import Layout from "../../../../components/Layout";
 import AuthGuard from "../../../../components/AuthGuard";
 import { ArrowLeft, Save, X } from "lucide-react";
@@ -35,7 +34,6 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     watch,
     reset,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postSchema),
     defaultValues: {
       title: "",
       body: "",
@@ -75,10 +73,10 @@ export default function EditPostPage({ params }: EditPostPageProps) {
             if (postData.id) {
               const enhancedPost = {
                 ...postData,
-                category: postData.category || "Technology",
-                tags: postData.tags || ["tech", "blog"],
-                createdAt: postData.createdAt || new Date().toISOString(),
-                updatedAt: postData.updatedAt || new Date().toISOString(),
+                category: "Technology",
+                tags: ["tech", "blog"],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
               };
               setCurrentPost(enhancedPost);
               reset({
@@ -107,6 +105,20 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   }, [router, id, fetchPosts, allPosts, reset]);
 
   const onSubmit = async (data: PostFormData) => {
+    // Manual validation
+    if (!data.title || data.title.length < 3) {
+      alert("Title must be at least 3 characters long");
+      return;
+    }
+    if (!data.body || data.body.length < 10) {
+      alert("Content must be at least 10 characters long");
+      return;
+    }
+    if (!data.category) {
+      alert("Please select a category");
+      return;
+    }
+
     console.log("Edit form submitted with data:", data);
     setIsSubmitting(true);
     try {

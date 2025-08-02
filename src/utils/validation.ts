@@ -16,7 +16,7 @@ export interface PostFormData {
   title: string;
   body: string;
   category: string;
-  tags: string;
+  tags?: string;
 }
 
 export const loginSchema = yup.object({
