@@ -2,6 +2,49 @@ import { getToken } from "../utils/jwt";
 
 const API_BASE_URL = "https://jsonplaceholder.typicode.com";
 
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+  userId: number;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  username: string;
+}
+
+interface Comment {
+  id: number;
+  postId: number;
+  name: string;
+  email: string;
+  body: string;
+}
+
+interface Album {
+  id: number;
+  userId: number;
+  title: string;
+}
+
+interface Photo {
+  id: number;
+  albumId: number;
+  title: string;
+  url: string;
+  thumbnailUrl: string;
+}
+
+interface Todo {
+  id: number;
+  userId: number;
+  title: string;
+  completed: boolean;
+}
+
 // API service with authentication
 class ApiService {
   private getHeaders(): HeadersInit {
@@ -45,23 +88,23 @@ class ApiService {
   }
 
   // Posts API
-  async getPosts(): Promise<any[]> {
-    return this.request<any[]>("/posts");
+  async getPosts(): Promise<Post[]> {
+    return this.request<Post[]>("/posts");
   }
 
-  async getPost(id: number): Promise<any> {
-    return this.request<any>(`/posts/${id}`);
+  async getPost(id: number): Promise<Post> {
+    return this.request<Post>(`/posts/${id}`);
   }
 
-  async createPost(postData: any): Promise<any> {
-    return this.request<any>("/posts", {
+  async createPost(postData: Omit<Post, "id">): Promise<Post> {
+    return this.request<Post>("/posts", {
       method: "POST",
       body: JSON.stringify(postData),
     });
   }
 
-  async updatePost(id: number, postData: any): Promise<any> {
-    return this.request<any>(`/posts/${id}`, {
+  async updatePost(id: number, postData: Partial<Post>): Promise<Post> {
+    return this.request<Post>(`/posts/${id}`, {
       method: "PUT",
       body: JSON.stringify(postData),
     });
@@ -74,48 +117,48 @@ class ApiService {
   }
 
   // Users API
-  async getUsers(): Promise<any[]> {
-    return this.request<any[]>("/users");
+  async getUsers(): Promise<User[]> {
+    return this.request<User[]>("/users");
   }
 
-  async getUser(id: number): Promise<any> {
-    return this.request<any>(`/users/${id}`);
+  async getUser(id: number): Promise<User> {
+    return this.request<User>(`/users/${id}`);
   }
 
   // Comments API
-  async getComments(): Promise<any[]> {
-    return this.request<any[]>("/comments");
+  async getComments(): Promise<Comment[]> {
+    return this.request<Comment[]>("/comments");
   }
 
-  async getPostComments(postId: number): Promise<any[]> {
-    return this.request<any[]>(`/posts/${postId}/comments`);
+  async getPostComments(postId: number): Promise<Comment[]> {
+    return this.request<Comment[]>(`/posts/${postId}/comments`);
   }
 
   // Albums API
-  async getAlbums(): Promise<any[]> {
-    return this.request<any[]>("/albums");
+  async getAlbums(): Promise<Album[]> {
+    return this.request<Album[]>("/albums");
   }
 
-  async getAlbum(id: number): Promise<any> {
-    return this.request<any>(`/albums/${id}`);
+  async getAlbum(id: number): Promise<Album> {
+    return this.request<Album>(`/albums/${id}`);
   }
 
   // Photos API
-  async getPhotos(): Promise<any[]> {
-    return this.request<any[]>("/photos");
+  async getPhotos(): Promise<Photo[]> {
+    return this.request<Photo[]>("/photos");
   }
 
-  async getAlbumPhotos(albumId: number): Promise<any[]> {
-    return this.request<any[]>(`/albums/${albumId}/photos`);
+  async getAlbumPhotos(albumId: number): Promise<Photo[]> {
+    return this.request<Photo[]>(`/albums/${albumId}/photos`);
   }
 
   // Todos API
-  async getTodos(): Promise<any[]> {
-    return this.request<any[]>("/todos");
+  async getTodos(): Promise<Todo[]> {
+    return this.request<Todo[]>("/todos");
   }
 
-  async getUserTodos(userId: number): Promise<any[]> {
-    return this.request<any[]>(`/users/${userId}/todos`);
+  async getUserTodos(userId: number): Promise<Todo[]> {
+    return this.request<Todo[]>(`/users/${userId}/todos`);
   }
 }
 
