@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { apiService } from "../services/api";
 
 export interface Post {
   id: number;
@@ -46,10 +47,7 @@ export const usePostStore = create<PostState>((set, get) => ({
   fetchPosts: async () => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      const posts: Post[] = await response.json();
+      const posts: Post[] = await apiService.getPosts();
 
       // Add mock data for tags and categories
       const postsWithMetadata = posts.map((post, index) => ({
@@ -79,18 +77,7 @@ export const usePostStore = create<PostState>((set, get) => ({
   createPost: async (postData) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(
-        "https://jsonplaceholder.typicode.com/posts",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        }
-      );
-
-      const newPost: Post = await response.json();
+      const newPost: Post = await apiService.createPost(postData);
       const { posts } = get();
 
       set({
@@ -108,18 +95,7 @@ export const usePostStore = create<PostState>((set, get) => ({
   updatePost: async (id, postData) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await fetch(
-        `https://jsonplaceholder.typicode.com/posts/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(postData),
-        }
-      );
-
-      const updatedPost: Post = await response.json();
+      const updatedPost: Post = await apiService.updatePost(id, postData);
       const { posts } = get();
 
       set({
@@ -137,10 +113,7 @@ export const usePostStore = create<PostState>((set, get) => ({
   deletePost: async (id) => {
     set({ isLoading: true, error: null });
     try {
-      await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
-        method: "DELETE",
-      });
-
+      await apiService.deletePost(id);
       const { posts } = get();
 
       set({

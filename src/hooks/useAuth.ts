@@ -1,4 +1,4 @@
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from "../store/authStore";
 
 export const useAuth = () => {
   const {
@@ -10,6 +10,7 @@ export const useAuth = () => {
     login,
     logout,
     clearError,
+    checkAuth,
   } = useAuthStore();
 
   return {
@@ -21,5 +22,6 @@ export const useAuth = () => {
     login,
     logout,
     clearError,
+    checkAuth,
   };
-}; 
+};
