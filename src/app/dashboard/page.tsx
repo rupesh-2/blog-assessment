@@ -18,14 +18,14 @@ export default function DashboardPage() {
     allPosts,
     isLoading,
     error,
-    searchTerm,
-    selectedCategory,
+    search,
+    filter,
     currentPage,
     totalPages,
     categories,
     fetchPosts,
-    setSearchTerm,
-    setSelectedCategory,
+    setSearch,
+    setFilter,
     setCurrentPage,
     deletePost,
   } = usePosts();
@@ -92,8 +92,8 @@ export default function DashboardPage() {
                 <input
                   type="text"
                   placeholder="Search posts..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -102,8 +102,8 @@ export default function DashboardPage() {
               <div className="relative">
                 <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
                 >
                   <option value="">All Categories</option>
@@ -199,11 +199,11 @@ export default function DashboardPage() {
                 No posts found
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {searchTerm || selectedCategory
+                {search || filter
                   ? "Try adjusting your search or filter criteria."
                   : "Get started by creating your first blog post."}
               </p>
-              {!searchTerm && !selectedCategory && (
+              {!search && !filter && (
                 <button
                   onClick={() => router.push("/posts/create")}
                   className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"

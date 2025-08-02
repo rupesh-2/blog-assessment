@@ -8,17 +8,16 @@ export const usePosts = () => {
     currentPost,
     isLoading,
     error,
-    searchTerm,
-    selectedCategory,
+    search,
+    filter,
     currentPage,
     postsPerPage,
     fetchPosts,
     createPost,
     updatePost,
     deletePost,
-    setCurrentPost,
-    setSearchTerm,
-    setSelectedCategory,
+    setSearch,
+    setFilter,
     setCurrentPage,
     clearError,
   } = usePostStore();
@@ -28,19 +27,19 @@ export const usePosts = () => {
     let filtered = posts;
 
     // Filter by search term
-    if (searchTerm) {
+    if (search) {
       filtered = filtered.filter((post) =>
-        post.title.toLowerCase().includes(searchTerm.toLowerCase())
+        post.title.toLowerCase().includes(search.toLowerCase())
       );
     }
 
     // Filter by category
-    if (selectedCategory) {
-      filtered = filtered.filter((post) => post.category === selectedCategory);
+    if (filter) {
+      filtered = filtered.filter((post) => post.category === filter);
     }
 
     return filtered;
-  }, [posts, searchTerm, selectedCategory]);
+  }, [posts, search, filter]);
 
   // Paginate posts
   const paginatedPosts = useMemo(() => {
@@ -67,8 +66,8 @@ export const usePosts = () => {
     currentPost,
     isLoading,
     error,
-    searchTerm,
-    selectedCategory,
+    search,
+    filter,
     currentPage,
     totalPages,
     categories,
@@ -76,9 +75,8 @@ export const usePosts = () => {
     createPost,
     updatePost,
     deletePost,
-    setCurrentPost,
-    setSearchTerm,
-    setSelectedCategory,
+    setSearch,
+    setFilter,
     setCurrentPage,
     clearError,
   };
