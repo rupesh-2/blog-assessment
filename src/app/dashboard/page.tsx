@@ -58,6 +58,15 @@ export default function DashboardPage() {
     setCurrentPage(page);
   };
 
+  // Debug logging
+  useEffect(() => {
+    console.log("Dashboard state:", {
+      search,
+      filter,
+      postsCount: posts.length,
+    });
+  }, [search, filter, posts.length]);
+
   return (
     <AuthGuard>
       <Layout>

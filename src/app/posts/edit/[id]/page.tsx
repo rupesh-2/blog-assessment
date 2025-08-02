@@ -36,6 +36,12 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     reset,
   } = useForm<PostFormData>({
     resolver: yupResolver(postSchema),
+    defaultValues: {
+      title: "",
+      body: "",
+      category: "",
+      tags: "",
+    },
   });
 
   const watchedBody = watch("body");
@@ -101,6 +107,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   }, [router, id, fetchPosts, allPosts, reset]);
 
   const onSubmit = async (data: PostFormData) => {
+    console.log("Edit form submitted with data:", data);
     setIsSubmitting(true);
     try {
       const postData = {
@@ -111,7 +118,9 @@ export default function EditPostPage({ params }: EditPostPageProps) {
           : [],
       };
 
+      console.log("Calling updatePost with:", postData);
       await updatePost(parseInt(id), postData);
+      console.log("updatePost completed successfully");
       router.push("/dashboard");
     } catch (error) {
       console.error("Failed to update post:", error);

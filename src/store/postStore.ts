@@ -65,7 +65,19 @@ export const usePostStore = create<PostState>()(
         set({ isLoading: true, error: null });
         try {
           const posts = await apiService.getPosts();
-          set({ posts, isLoading: false });
+
+          // Add category and tags to posts from API
+          const postsWithMetadata = posts.map((post, index) => ({
+            ...post,
+            category: AVAILABLE_CATEGORIES[index % AVAILABLE_CATEGORIES.length],
+            tags: [`tag${index + 1}`, `tech`, `blog`],
+            createdAt: new Date(
+              Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            updatedAt: new Date().toISOString(),
+          }));
+
+          set({ posts: postsWithMetadata, isLoading: false });
         } catch (error) {
           set({
             error:
@@ -76,6 +88,7 @@ export const usePostStore = create<PostState>()(
       },
 
       createPost: async (postData) => {
+        console.log("createPost called with:", postData);
         set({ isLoading: true, error: null });
         try {
           const { posts, nextId } = get();
@@ -86,6 +99,8 @@ export const usePostStore = create<PostState>()(
             updatedAt: new Date().toISOString(),
           };
 
+          console.log("Created new post for local state:", newPost);
+
           // Add to local state immediately
           set({
             posts: [newPost, ...posts],
@@ -95,7 +110,15 @@ export const usePostStore = create<PostState>()(
 
           // Try to create on server (but don't rely on it)
           try {
-            await apiService.createPost(postData);
+            // Only send required fields to API (title, body, userId)
+            const apiPostData = {
+              title: postData.title,
+              body: postData.body,
+              userId: postData.userId,
+            };
+            console.log("Sending to API:", apiPostData);
+            await apiService.createPost(apiPostData);
+            console.log("API call successful");
           } catch (error) {
             console.warn(
               "Server-side creation failed (expected with JSONPlaceholder):",
@@ -103,6 +126,7 @@ export const usePostStore = create<PostState>()(
             );
           }
         } catch (error) {
+          console.error("Error in createPost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to create post",
@@ -112,6 +136,7 @@ export const usePostStore = create<PostState>()(
       },
 
       updatePost: async (id, postData) => {
+        console.log("updatePost called with id:", id, "data:", postData);
         set({ isLoading: true, error: null });
         try {
           const { posts } = get();
@@ -124,6 +149,8 @@ export const usePostStore = create<PostState>()(
               updatedAt: new Date().toISOString(),
             };
 
+            console.log("Updated post for local state:", updatedPost);
+
             // Update local state immediately
             set({
               posts: posts.map((p) => (p.id === id ? updatedPost : p)),
@@ -132,7 +159,15 @@ export const usePostStore = create<PostState>()(
 
             // Try to update on server (but don't rely on it)
             try {
-              await apiService.updatePost(id, postData);
+              // Only send required fields to API (title, body, userId)
+              const apiPostData = {
+                title: postData.title,
+                body: postData.body,
+                userId: existingPost.userId,
+              };
+              console.log("Sending to API:", apiPostData);
+              await apiService.updatePost(id, apiPostData);
+              console.log("API call successful");
             } catch (error) {
               console.warn(
                 "Server-side update failed (expected with JSONPlaceholder):",
@@ -143,6 +178,7 @@ export const usePostStore = create<PostState>()(
             throw new Error("Post not found");
           }
         } catch (error) {
+          console.error("Error in updatePost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to update post",
