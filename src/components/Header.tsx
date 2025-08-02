@@ -69,18 +69,6 @@ export default function Header() {
             >
               Home
             </Link>
-            <Link
-              href="/theme-demo"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Theme Demo
-            </Link>
-            <Link
-              href="/test-theme"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Test Theme
-            </Link>
             {user && (
               <>
                 <Link
