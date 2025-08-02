@@ -20,7 +20,9 @@ interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
+  registeredUsers: User[];
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
   checkAuth: () => void;
@@ -34,37 +36,78 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      registeredUsers: [
+        // Default admin user
+        {
+          id: 1,
+          name: "Admin User",
+          email: "admin@example.com",
+        },
+      ],
 
       login: async (email: string, password: string) => {
         set({ isLoading: true, error: null });
 
         try {
-          // Mock login - in real app, this would be an API call
-          if (email === "admin@example.com" && password === "password") {
-            const mockUser: User = {
-              id: 1,
-              name: "Admin User",
-              email: email,
-            };
+          const { registeredUsers } = get();
 
+          // Check if user exists in registered users
+          const user = registeredUsers.find((u) => u.email === email);
+
+          if (user) {
             // Create a proper JWT token
-            const token = createMockJWT(mockUser);
+            const token = createMockJWT(user);
 
             // Store token in localStorage
             setToken(token);
 
             set({
-              user: mockUser,
+              user: user,
               token: token,
               isAuthenticated: true,
               isLoading: false,
             });
           } else {
-            throw new Error("Invalid credentials");
+            throw new Error("User not found. Please register first.");
           }
         } catch (error) {
           set({
             error: error instanceof Error ? error.message : "Login failed",
+            isLoading: false,
+          });
+        }
+      },
+
+      register: async (name: string, email: string, password: string) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const { registeredUsers } = get();
+
+          // Check if user already exists
+          const existingUser = registeredUsers.find((u) => u.email === email);
+          if (existingUser) {
+            throw new Error("User with this email already exists");
+          }
+
+          // Create new user
+          const newUser: User = {
+            id: registeredUsers.length + 1,
+            name: name,
+            email: email,
+          };
+
+          // Add to registered users
+          const updatedUsers = [...registeredUsers, newUser];
+
+          set({
+            registeredUsers: updatedUsers,
+            isLoading: false,
+          });
+        } catch (error) {
+          set({
+            error:
+              error instanceof Error ? error.message : "Registration failed",
             isLoading: false,
           });
         }
@@ -117,6 +160,7 @@ export const useAuthStore = create<AuthState>()(
       name: "auth-storage",
       partialize: (state) => ({
         token: state.token,
+        registeredUsers: state.registeredUsers,
       }),
       onRehydrateStorage: () => (state) => {
         // Check auth status when store is rehydrated
