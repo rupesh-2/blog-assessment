@@ -20,7 +20,6 @@ export default function CreatePostPage() {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     watch,
   } = useForm<PostFormData>({
     resolver: yupResolver(postSchema) as any,
@@ -36,7 +35,7 @@ export default function CreatePostPage() {
 
   // AuthGuard will handle authentication check
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: PostFormData) => {
     console.log("Form submitted with data:", data);
     setIsSubmitting(true);
     try {

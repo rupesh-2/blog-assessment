@@ -8,6 +8,7 @@ import Layout from "../../components/Layout";
 import PostCard from "../../components/PostCard";
 import AuthGuard from "../../components/AuthGuard";
 import { Search, Filter, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Post } from "../../store/postStore";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function DashboardPage() {
     );
   }, [posts, allPosts]);
 
-  const handleEdit = (post: any) => {
+  const handleEdit = (post: Post) => {
     console.log("Edit clicked for post:", post.id);
     router.push(`/posts/edit/${post.id}`);
   };
