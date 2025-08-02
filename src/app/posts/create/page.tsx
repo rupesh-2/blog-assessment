@@ -23,7 +23,7 @@ export default function CreatePostPage() {
     setValue,
     watch,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postSchema),
+    resolver: yupResolver(postSchema) as any,
     defaultValues: {
       title: "",
       body: "",
@@ -36,13 +36,13 @@ export default function CreatePostPage() {
 
   // AuthGuard will handle authentication check
 
-  const onSubmit = async (data: PostFormData) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
       const postData = {
         ...data,
         userId: 1, // Mock user ID
-        tags: data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [],
+        tags: data.tags ? data.tags.split(",").map((tag: string) => tag.trim()) : [],
       };
 
       await createPost(postData);

@@ -20,9 +20,10 @@ interface EditPostPageProps {
 
 export default function EditPostPage({ params }: EditPostPageProps) {
   const router = useRouter();
-  const { posts, updatePost, isLoading, error, fetchPosts } = usePosts();
+  const { allPosts, updatePost, isLoading, error, fetchPosts } = usePosts();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentPost, setCurrentPost] = useState<any>(null);
+  const [isLoadingPost, setIsLoadingPost] = useState(true);
 
   // Unwrap params using React.use()
   const { id } = use(params);
@@ -33,53 +34,82 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<PostFormData>({
-    resolver: yupResolver(postSchema),
+    resolver: yupResolver(postSchema) as any,
   });
 
   const watchedBody = watch("body");
 
   useEffect(() => {
     const loadPost = async () => {
-      await fetchPosts();
-      const post = posts.find((p) => p.id === parseInt(id));
-      if (post) {
-        setCurrentPost(post);
-        setValue("title", post.title);
-        setValue("body", post.body);
-        setValue("category", post.category || "");
-        setValue("tags", post.tags ? post.tags.join(", ") : "");
-      } else {
-        // If post not found in current posts, try to fetch it individually
-        try {
-          const { apiService } = await import("../../../../services/api");
-          const postData = await apiService.getPost(parseInt(id));
-          if (postData.id) {
-            setCurrentPost(postData);
-            setValue("title", postData.title);
-            setValue("body", postData.body);
-            setValue("category", "Technology"); // Default category
-            setValue("tags", "tech, blog");
-          } else {
+      setIsLoadingPost(true);
+      try {
+        // First try to fetch all posts if not already loaded
+        if (allPosts.length === 0) {
+          await fetchPosts();
+        }
+
+        // Look for the post in allPosts
+        const post = allPosts.find((p) => p.id === parseInt(id));
+
+        if (post) {
+          setCurrentPost(post);
+          // Reset form with post data
+          reset({
+            title: post.title,
+            body: post.body,
+            category: post.category || "",
+            tags: post.tags ? post.tags.join(", ") : "",
+          });
+        } else {
+          // If post not found in current posts, try to fetch it individually
+          try {
+            const { apiService } = await import("../../../../services/api");
+            const postData = await apiService.getPost(parseInt(id));
+            if (postData.id) {
+              const enhancedPost = {
+                ...postData,
+                category: postData.category || "Technology",
+                tags: postData.tags || ["tech", "blog"],
+                createdAt: postData.createdAt || new Date().toISOString(),
+                updatedAt: postData.updatedAt || new Date().toISOString(),
+              };
+              setCurrentPost(enhancedPost);
+              reset({
+                title: enhancedPost.title,
+                body: enhancedPost.body,
+                category: enhancedPost.category,
+                tags: enhancedPost.tags.join(", "),
+              });
+            } else {
+              router.push("/dashboard");
+            }
+          } catch (error) {
+            console.error("Failed to fetch post:", error);
             router.push("/dashboard");
           }
-        } catch (error) {
-          console.error("Failed to fetch post:", error);
-          router.push("/dashboard");
         }
+      } catch (error) {
+        console.error("Failed to load post:", error);
+        router.push("/dashboard");
+      } finally {
+        setIsLoadingPost(false);
       }
     };
 
     loadPost();
-  }, [router, id, fetchPosts, posts, setValue]);
+  }, [router, id, fetchPosts, allPosts, reset]);
 
-  const onSubmit = async (data: PostFormData) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
       const postData = {
         ...data,
         userId: currentPost?.userId || 1,
-        tags: data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [],
+        tags: data.tags
+          ? data.tags.split(",").map((tag: string) => tag.trim())
+          : [],
       };
 
       await updatePost(parseInt(id), postData);
@@ -91,8 +121,50 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     }
   };
 
+  // Show loading state while post is being loaded
+  if (isLoadingPost) {
+    return (
+      <AuthGuard>
+        <Layout>
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center min-h-[400px]">
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Loading post...
+                </span>
+              </div>
+            </div>
+          </div>
+        </Layout>
+      </AuthGuard>
+    );
+  }
+
+  // Show error if post not found
   if (!currentPost) {
-    return null;
+    return (
+      <AuthGuard>
+        <Layout>
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center py-12">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Post Not Found
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                The post you're looking for doesn't exist or has been removed.
+              </p>
+              <button
+                onClick={() => router.push("/dashboard")}
+                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                Back to Dashboard
+              </button>
+            </div>
+          </div>
+        </Layout>
+      </AuthGuard>
+    );
   }
 
   return (
