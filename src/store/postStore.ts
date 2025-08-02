@@ -7,48 +7,46 @@ export interface Post {
   title: string;
   body: string;
   userId: number;
-  tags?: string[];
   category?: string;
+  tags?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
+
+export const AVAILABLE_CATEGORIES = [
+  "Technology",
+  "Business",
+  "Lifestyle",
+  "Travel",
+  "Food",
+  "Health",
+  "Education",
+  "Entertainment",
+  "Sports",
+  "Politics",
+] as const;
 
 interface PostState {
   posts: Post[];
   currentPost: Post | null;
   isLoading: boolean;
   error: string | null;
-  searchTerm: string;
-  selectedCategory: string;
+  search: string;
+  filter: string;
   currentPage: number;
   postsPerPage: number;
-  nextId: number; // For generating unique IDs
+  nextId: number;
 
   // Actions
   fetchPosts: () => Promise<void>;
   createPost: (post: Omit<Post, "id">) => Promise<void>;
   updatePost: (id: number, post: Partial<Post>) => Promise<void>;
   deletePost: (id: number) => Promise<void>;
-  setCurrentPost: (post: Post | null) => void;
-  setSearchTerm: (term: string) => void;
-  setSelectedCategory: (category: string) => void;
+  setSearch: (search: string) => void;
+  setFilter: (filter: string) => void;
   setCurrentPage: (page: number) => void;
   clearError: () => void;
 }
-
-// Available categories for consistency
-export const AVAILABLE_CATEGORIES = [
-  "Technology",
-  "Lifestyle",
-  "Business",
-  "Travel",
-  "Food",
-  "Health",
-  "Sports",
-  "Entertainment",
-  "Education",
-  "Science",
-];
 
 export const usePostStore = create<PostState>()(
   persist(
@@ -57,34 +55,18 @@ export const usePostStore = create<PostState>()(
       currentPost: null,
       isLoading: false,
       error: null,
-      searchTerm: "",
-      selectedCategory: "",
+      search: "",
+      filter: "",
       currentPage: 1,
       postsPerPage: 10,
-      nextId: 101, // Start after JSONPlaceholder's existing posts
+      nextId: 101, // Start from 101 to avoid conflicts with JSONPlaceholder
 
       fetchPosts: async () => {
-        console.log("fetchPosts called");
         set({ isLoading: true, error: null });
         try {
-          const posts: Post[] = await apiService.getPosts();
-          console.log("API returned posts:", posts.length);
-
-          // Add mock data for tags and categories
-          const postsWithMetadata = posts.map((post, index) => ({
-            ...post,
-            tags: [`tag${index + 1}`, `tech`, `blog`],
-            category: AVAILABLE_CATEGORIES[index % AVAILABLE_CATEGORIES.length],
-            createdAt: new Date(
-              Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-            updatedAt: new Date().toISOString(),
-          }));
-
-          set({ posts: postsWithMetadata, isLoading: false });
-          console.log("Posts set in store:", postsWithMetadata.length);
+          const posts = await apiService.getPosts();
+          set({ posts, isLoading: false });
         } catch (error) {
-          console.error("Error fetching posts:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to fetch posts",
@@ -94,25 +76,15 @@ export const usePostStore = create<PostState>()(
       },
 
       createPost: async (postData) => {
-        console.log("createPost called with:", postData);
         set({ isLoading: true, error: null });
         try {
           const { posts, nextId } = get();
-          console.log("Current posts count:", posts.length, "Next ID:", nextId);
-
-          // Create a new post with a unique ID
           const newPost: Post = {
+            ...postData,
             id: nextId,
-            title: postData.title,
-            body: postData.body,
-            userId: postData.userId,
-            tags: postData.tags || [],
-            category: postData.category || "Technology",
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           };
-
-          console.log("Created new post:", newPost);
 
           // Add to local state immediately
           set({
@@ -121,149 +93,97 @@ export const usePostStore = create<PostState>()(
             isLoading: false,
           });
 
-          console.log("Post added to store. New count:", posts.length + 1);
-
-          // Try to create on the API (JSONPlaceholder will return success but not persist)
+          // Try to create on server (but don't rely on it)
           try {
-            await apiService.createPost({
-              title: postData.title,
-              body: postData.body,
-              userId: postData.userId,
-            });
-            console.log("Post created successfully (API call made):", newPost);
-          } catch (apiError) {
+            await apiService.createPost(postData);
+          } catch (error) {
             console.warn(
-              "API call failed, but post is saved locally:",
-              apiError
+              "Server-side creation failed (expected with JSONPlaceholder):",
+              error
             );
           }
         } catch (error) {
-          console.error("Error in createPost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to create post",
             isLoading: false,
           });
-          throw error;
         }
       },
 
       updatePost: async (id, postData) => {
-        console.log("updatePost called with id:", id, "data:", postData);
         set({ isLoading: true, error: null });
         try {
           const { posts } = get();
           const existingPost = posts.find((p) => p.id === id);
 
-          if (!existingPost) {
+          if (existingPost) {
+            const updatedPost: Post = {
+              ...existingPost,
+              ...postData,
+              updatedAt: new Date().toISOString(),
+            };
+
+            // Update local state immediately
+            set({
+              posts: posts.map((p) => (p.id === id ? updatedPost : p)),
+              isLoading: false,
+            });
+
+            // Try to update on server (but don't rely on it)
+            try {
+              await apiService.updatePost(id, postData);
+            } catch (error) {
+              console.warn(
+                "Server-side update failed (expected with JSONPlaceholder):",
+                error
+              );
+            }
+          } else {
             throw new Error("Post not found");
           }
-
-          console.log("Found existing post:", existingPost);
-
-          // Create updated post with metadata
-          const updatedPost: Post = {
-            ...existingPost,
-            title: postData.title || existingPost.title,
-            body: postData.body || existingPost.body,
-            tags: postData.tags || existingPost.tags || [],
-            category:
-              postData.category || existingPost.category || "Technology",
-            updatedAt: new Date().toISOString(),
-          };
-
-          console.log("Updated post:", updatedPost);
-
-          // Update local state immediately
-          set({
-            posts: posts.map((post) => (post.id === id ? updatedPost : post)),
-            isLoading: false,
-          });
-
-          console.log("Post updated in store");
-
-          // Try to update on the API (JSONPlaceholder will return success but not persist)
-          try {
-            await apiService.updatePost(id, {
-              title: updatedPost.title,
-              body: updatedPost.body,
-              userId: existingPost.userId,
-            });
-            console.log(
-              "Post updated successfully (API call made):",
-              updatedPost
-            );
-          } catch (apiError) {
-            console.warn(
-              "API call failed, but post is updated locally:",
-              apiError
-            );
-          }
         } catch (error) {
-          console.error("Error in updatePost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to update post",
             isLoading: false,
           });
-          throw error;
         }
       },
 
       deletePost: async (id) => {
-        console.log("deletePost called with id:", id);
         set({ isLoading: true, error: null });
         try {
           const { posts } = get();
 
           // Remove from local state immediately
           set({
-            posts: posts.filter((post) => post.id !== id),
+            posts: posts.filter((p) => p.id !== id),
             isLoading: false,
           });
 
-          console.log("Post deleted from store");
-
-          // Try to delete on the API (JSONPlaceholder will return success but not persist)
+          // Try to delete on server (but don't rely on it)
           try {
             await apiService.deletePost(id);
-            console.log("Post deleted successfully (API call made):", id);
-          } catch (apiError) {
+          } catch (error) {
             console.warn(
-              "API call failed, but post is removed locally:",
-              apiError
+              "Server-side deletion failed (expected with JSONPlaceholder):",
+              error
             );
           }
         } catch (error) {
-          console.error("Error in deletePost:", error);
           set({
             error:
               error instanceof Error ? error.message : "Failed to delete post",
             isLoading: false,
           });
-          throw error;
         }
       },
 
-      setCurrentPost: (post) => {
-        set({ currentPost: post });
-      },
-
-      setSearchTerm: (term) => {
-        set({ searchTerm: term, currentPage: 1 });
-      },
-
-      setSelectedCategory: (category) => {
-        set({ selectedCategory: category, currentPage: 1 });
-      },
-
-      setCurrentPage: (page) => {
-        set({ currentPage: page });
-      },
-
-      clearError: () => {
-        set({ error: null });
-      },
+      setSearch: (search) => set({ search, currentPage: 1 }),
+      setFilter: (filter) => set({ filter, currentPage: 1 }),
+      setCurrentPage: (currentPage) => set({ currentPage }),
+      clearError: () => set({ error: null }),
     }),
     {
       name: "post-storage",
@@ -272,11 +192,7 @@ export const usePostStore = create<PostState>()(
         nextId: state.nextId,
       }),
       onRehydrateStorage: () => (state) => {
-        console.log(
-          "Post store rehydrated:",
-          state?.posts?.length || 0,
-          "posts"
-        );
+        console.log("Post store rehydrated:", state);
       },
     }
   )

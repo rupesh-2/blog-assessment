@@ -1,6 +1,24 @@
 import * as yup from "yup";
 
-// Login validation schema
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+export interface RegisterFormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface PostFormData {
+  title: string;
+  body: string;
+  category: string;
+  tags?: string;
+}
+
 export const loginSchema = yup.object({
   email: yup
     .string()
@@ -12,9 +30,6 @@ export const loginSchema = yup.object({
     .required("Password is required"),
 });
 
-export type LoginFormData = yup.InferType<typeof loginSchema>;
-
-// Registration validation schema
 export const registerSchema = yup.object({
   name: yup
     .string()
@@ -34,13 +49,10 @@ export const registerSchema = yup.object({
     .required("Please confirm your password"),
 });
 
-export type RegisterFormData = yup.InferType<typeof registerSchema>;
-
-// Post validation schema - simplified
 export const postSchema = yup.object({
   title: yup
     .string()
-    .min(5, "Title must be at least 5 characters")
+    .min(3, "Title must be at least 3 characters")
     .max(100, "Title must be less than 100 characters")
     .required("Title is required"),
   body: yup
@@ -50,5 +62,3 @@ export const postSchema = yup.object({
   category: yup.string().required("Category is required"),
   tags: yup.string().optional(),
 });
-
-export type PostFormData = yup.InferType<typeof postSchema>;
