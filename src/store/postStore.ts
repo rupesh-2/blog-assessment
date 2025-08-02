@@ -132,8 +132,8 @@ export const usePostStore = create<PostState>()(
               userId: postData.userId,
             };
             console.log("Sending to API:", apiPostData);
-            await apiService.createPost(apiPostData);
-            console.log("API call successful");
+            const result = await apiService.createPost(apiPostData);
+            console.log("API call successful:", result);
           } catch (error) {
             console.warn(
               "Server-side creation failed (expected with JSONPlaceholder):",
@@ -181,8 +181,8 @@ export const usePostStore = create<PostState>()(
                 userId: existingPost.userId,
               };
               console.log("Sending to API:", apiPostData);
-              await apiService.updatePost(id, apiPostData);
-              console.log("API call successful");
+              const result = await apiService.updatePost(id, apiPostData);
+              console.log("API call successful:", result);
             } catch (error) {
               console.warn(
                 "Server-side update failed (expected with JSONPlaceholder):",
@@ -215,7 +215,8 @@ export const usePostStore = create<PostState>()(
 
           // Try to delete on server (but don't rely on it)
           try {
-            await apiService.deletePost(id);
+            const result = await apiService.deletePost(id);
+            console.log("API delete call successful:", result);
           } catch (error) {
             console.warn(
               "Server-side deletion failed (expected with JSONPlaceholder):",
