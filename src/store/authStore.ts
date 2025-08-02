@@ -1,5 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import {
+  createMockJWT,
+  decodeToken,
+  isTokenValid,
+  setToken,
+  removeToken,
+} from "../utils/jwt";
 
 interface User {
   id: number;
@@ -16,6 +23,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   clearError: () => void;
+  checkAuth: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -38,11 +46,16 @@ export const useAuthStore = create<AuthState>()(
               name: "Admin User",
               email: email,
             };
-            const mockToken = "mock-jwt-token-" + Date.now();
+
+            // Create a proper JWT token
+            const token = createMockJWT(mockUser);
+
+            // Store token in localStorage
+            setToken(token);
 
             set({
               user: mockUser,
-              token: mockToken,
+              token: token,
               isAuthenticated: true,
               isLoading: false,
             });
@@ -58,6 +71,9 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
+        // Remove token from localStorage
+        removeToken();
+
         set({
           user: null,
           token: null,
@@ -69,14 +85,45 @@ export const useAuthStore = create<AuthState>()(
       clearError: () => {
         set({ error: null });
       },
+
+      checkAuth: () => {
+        const { token } = get();
+
+        if (token && isTokenValid(token)) {
+          // Decode token to get user info
+          const decoded = decodeToken(token);
+          if (decoded) {
+            set({
+              user: {
+                id: decoded.id,
+                name: decoded.name,
+                email: decoded.email,
+              },
+              isAuthenticated: true,
+            });
+          }
+        } else {
+          // Token is invalid or expired
+          removeToken();
+          set({
+            user: null,
+            token: null,
+            isAuthenticated: false,
+          });
+        }
+      },
     }),
     {
       name: "auth-storage",
       partialize: (state) => ({
-        user: state.user,
         token: state.token,
-        isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        // Check auth status when store is rehydrated
+        if (state) {
+          state.checkAuth();
+        }
+      },
     }
   )
 );
