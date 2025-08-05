@@ -63,10 +63,6 @@
 
 The platform uses a mock authentication system for demonstration:
 
-**Demo Credentials:**
-
-- Email: `admin@example.com`
-- Password: `password`
 
 ## 📁 Project Structure
 
